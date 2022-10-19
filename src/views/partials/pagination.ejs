@@ -1,0 +1,42 @@
+<!-- Paginación -->
+        <%_ if (pageArray.length !== 1) { _%> 
+            <div class="mx-auto mt-4">
+                <ul class="pagination pagination-lg justify-content-center">
+                    <%_ if (query.get('page') !== '1' && query.get('page') !== '' && query.get('page')) { _%>
+                    <li class="page-item">
+                        <button type="submit" form="form_filter" name="page" value="<%= parseInt(query.get('page')) - 1 %>" class="page-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
+                                <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                            </svg>
+                        </button>
+                    </li>
+                    <%_ } _%>
+                <%_ pageArray.forEach((page) => { _%>
+                    <%_ if (page === '...') { _%>
+                    <li class="page-item disabled">
+                        <button class="page-link" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                            </svg>
+                        </button>
+                    </li>
+                    <%_ } else { _%>
+                    <li class="page-item">
+                        <button type="submit" form="form_filter" name="page" value="<%= page %>" id="pagination" class="page-link">
+                            <%= page %>
+                        </button>
+                    </li>
+                    <%_ } _%>
+                <%_ }) _%>
+                    <%_ if (query.get('page') !== pageArray[pageArray.length-1].toString() && query.get('page') !== '') { _%>
+                    <li class="page-item">
+                        <button type="submit" form="form_filter" name="page" value="<%= parseInt(query.get('page')) + 1 || 2 %>" class="page-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+                                <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                            </svg>
+                        </button>
+                    </li>
+                    <%_ } _%>
+                </ul>
+            </div>
+            <%_ } _%> 

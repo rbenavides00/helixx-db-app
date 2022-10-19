@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title><%= title %></title>
+        <link rel="icon" href="/img/icon.png">
+        <link rel="stylesheet" href="https://bootswatch.com/4/lux/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    </head>
+    <body>
+        <!-- Barra de navegación -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <div class="container-fluid">
+                <%_ if (user) { _%>
+                <a href="/tables" title='Ir a "Tablas"'>
+                <%_ } else { _%>
+                <a href="/login" title='Ir a "Iniciar sesión"'>
+                <%_ } _%>   
+                    <img height="50" src="/img/logo.png">
+                </a>
+                <%_ if (user) { _%>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarColor01">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/tables">Tablas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/history">Historial</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/users">Usuarios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/logout">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                                    <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                                </svg>
+                                &nbsp;Cerrar sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <%_ } _%>
+            </div>
+        </nav>
+
+        <!-- Contenedor prinicpal -->
+        <div class="container-fluid">
+            <%- body %>
+        </div>
+
+        <!-- SCRIPT: Scripts generales -->
+        <script>
+            $(document).ready(function () {
+                var query = new URLSearchParams(location.search)
+                var url = location.pathname + location.search
+                $('li.active').removeClass('active')
+                $(`a[href="${url.split('/view')[0]}"]`).closest('li').addClass('active')
+                $(`a[href="${url.split('?')[0]}"]`).closest('li').addClass('active')
+                $(`button[value="${query.get('page')}"][id="pagination"]`).closest('li').addClass('active')
+                if (!query.get('page'))
+                    $('button[value="1"][id="pagination"]').closest('li').addClass('active')
+
+                $('form').submit(function (e) {
+                    var emptyInputs = $(this).find('input, select').filter(function () {
+                        return !$.trim(this.value).length
+                    }).prop('disabled', true)
+                })
+            })
+        </script>
+        <noscript>
+            <style type="text/css">
+                .container-fluid { display: none; }
+            </style>
+            <br><br><br><br>
+            <div class="d-flex align-items-center justify-content-center mt-5" style="height: 350px;">
+                <div class="card text-white bg-danger mb-3" style="width: 500px;">
+                    <div class="card-header">Advertencia</div>
+                    <div class="card-body">
+                        <h3 class="card-title">JavaScript deshabilitado</h3>
+                        <p class="card-text">Parece que no tienes JavaScript habilitado. Es importante que lo habilite para utilizar la página web. Para instrucciones de cómo habilitarlo, consulte en la siguiente página <a href="https://www.enable-javascript.com/es/" class="card-link" target="_blank" rel="noopener noreferrer">https://www.enable-javascript.com/es/</a></p>
+                    </div>
+                </div>
+            </div>
+        </noscript>
+    </body>
+</html>

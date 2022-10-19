@@ -1,0 +1,51 @@
+<%- layout('layouts/main') %>
+
+            <!-- Header con Errores -->
+            <br><br><br><br><br>
+            <%- partial('partials/errors') %>
+            <br>
+            
+            <!-- Cuerpo principal -->
+            <div class="row mx-auto">
+                <div class="col-md-4 offset-md-4">
+                    <div class="card mt-4 text-center">
+                        <div class="card-header">
+                            <h3>Iniciar sesión</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="/login" method="post">
+                                <div class="form-group">
+                                    <label class="form-label float-left">Correo electrónico</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text border-right-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                            </svg>
+                                        </span>
+                                        <input type="email" name="email" placeholder="Ingrese su correo electrónico" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label float-left">Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text border-right-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                                                <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                                            </svg>
+                                        </span>
+                                        <input type="password" name="password" placeholder="Ingrese su contraseña" class="form-control" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block mt-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
+                                        <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                                    </svg>
+                                    &nbsp;Iniciar sesión
+                                </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>

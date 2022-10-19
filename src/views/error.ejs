@@ -1,0 +1,12 @@
+<%- layout('layouts/main') %>
+
+            <div class="pt-5">
+                <br><br><br>
+                <h1>Se obtuvo un error</h1>
+            </div>
+
+            <div class="card card-body">
+                <p><strong class="font-weight-bold">Tipo de error:</strong> <%= error.name %></p>
+                <p><strong class="font-weight-bold">Descripción:</strong> <%= error.message %></p>
+                <p><strong class="font-weight-bold">Información detallada:</strong> <%= error.stack %></p>
+            </div>
