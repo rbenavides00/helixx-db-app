@@ -4,7 +4,7 @@
   "description": "Aplicación web para administrar bases de datos de Helixx BPO",
   "main": "index.js",
   "scripts": {
-    "start": "env-cmd -f ./config/prod.env node src/index.js",
+    "start": "node src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js"
   },
   "author": "Roberto Benavides",
