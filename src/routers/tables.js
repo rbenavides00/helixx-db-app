@@ -34,6 +34,17 @@ router.post('/tables/download/:table', auth, async (req, res) => {
     try {
         const table = req.params.table
         const connection = await connect()
+        const colls = await getColls(connection)
+        let tableFound = false
+
+        // ERROR HANDLER: Tabla no existe en base de datos
+        for (let i = 0; i < colls.length; i++) {
+            if (colls[i].name === table) tableFound = true
+        }
+        if (!tableFound) {
+            req.flash('errorMessage', `La tabla que intentó consultar ("${table}") no existe.`)
+            return res.redirect('/tables')
+        }
 
         if (table === 'users' || table === 'logs' || table === 'tables') {
             req.flash('errorMessage', 'Acción denegada.')

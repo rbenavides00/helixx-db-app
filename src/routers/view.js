@@ -143,6 +143,19 @@ router.get('/tables/view/:table', auth, async (req, res) => {
 router.get('/tables/view/:table/download', auth, async (req, res) => {
     try {
         const table = req.params.table
+        
+        const connection = await connect()
+        const colls = await getColls(connection)
+        let tableFound = false
+
+        // ERROR HANDLER: Tabla no existe en base de datos
+        for (let i = 0; i < colls.length; i++) {
+            if (colls[i].name === table) tableFound = true
+        }
+        if (!tableFound) {
+            req.flash('errorMessage', `La tabla que intentó consultar ("${table}") no existe.`)
+            return res.redirect('/tables')
+        }
 
         // ERROR HANDLER: Evitar descargar la tabla Users y Logs
         if (table === 'users' || table === 'logs' || table === 'tables')
@@ -154,7 +167,6 @@ router.get('/tables/view/:table/download', auth, async (req, res) => {
         var sort = {}
         var queryString = ''
 
-        const connection = await connect()
         const columns = await getCollFields(connection, table)
 
         // GET sin query
