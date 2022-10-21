@@ -1,7 +1,11 @@
 <!-- Paginación -->
         <%_ if (pageArray.length !== 1) { _%> 
             <div class="mx-auto mt-4">
+                <%_ if (isMobile) { _%> 
+                <ul class="pagination justify-content-center">
+                <%_ } else { _%>
                 <ul class="pagination pagination-lg justify-content-center">
+                <%_ } _%>  
                     <%_ if (query.get('page') !== '1' && query.get('page') !== '' && query.get('page')) { _%>
                     <li class="page-item">
                         <button type="submit" form="form_filter" name="page" value="<%= parseInt(query.get('page')) - 1 %>" class="page-link">

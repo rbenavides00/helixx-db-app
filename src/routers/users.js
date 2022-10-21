@@ -18,7 +18,11 @@ const auth = require('../utils/isAuthenticated')
 router.get('/users', auth, async (req, res) => {
     try {
         const users = await User.find({}).lean().sort({ createdAt: 1 })
-        res.status(200).render('users', { title: 'Usuarios', users })
+        if (req.useragent.isMobile) {
+            res.status(200).render('usersMobile', { title: 'Usuarios', users })
+        } else {
+            res.status(200).render('users', { title: 'Usuarios', users })
+        }
     } catch (error) {
         res.status(500).render('error', { title: 'Error', error })
     }

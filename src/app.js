@@ -13,6 +13,7 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const fileUpload = require('express-fileupload')
 const passport = require('passport')
+const useragent = require('express-useragent')
 // Importación de funciones/definición de objetos
 const auth = require('./utils/isAuthenticated')
 
@@ -57,6 +58,7 @@ app.use(fileUpload({
         next()
     }
 }))
+app.use(useragent.express())
 
 // Routers
 app.use(require('./routers/login'))

@@ -23,7 +23,11 @@ const { exportExcel } = require('../utils/excelConverter')
 router.get('/tables', auth, async (req, res) => {
     try {
         const tables = await Table.find({}).lean().sort({ createdAt: 1 })
-        res.render('tables', { title: 'Tablas', tables })
+        if (req.useragent.isMobile) {
+            res.render('tablesMobile', { title: 'Tablas', tables })
+        } else {
+            res.render('tables', { title: 'Tablas', tables })
+        }
     } catch (error) {
         res.status(500).render('error', { title: 'Error', error })
     }

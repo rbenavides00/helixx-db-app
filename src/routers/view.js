@@ -124,16 +124,31 @@ router.get('/tables/view/:table', auth, async (req, res) => {
             return res.redirect(`/tables/view/${table}`)
         }
 
-        res.render('view', {
-            title: `Ver tabla ${table.charAt(0).toUpperCase() + table.slice(1)}`,
-            table,
-            columns,
-            columnsToKeep,
-            docs,
-            pageArray,
-            firstAccess: Object.keys(req.query).length === 0 && req.query.constructor === Object,
-            docsCount
-        })
+        if (req.useragent.isMobile) {
+            res.render('viewMobile', {
+                title: `Ver tabla ${table.charAt(0).toUpperCase() + table.slice(1)}`,
+                table,
+                columns,
+                columnsToKeep,
+                docs,
+                pageArray,
+                firstAccess: Object.keys(req.query).length === 0 && req.query.constructor === Object,
+                docsCount,
+                isMobile: true
+            })
+        } else {
+            res.render('view', {
+                title: `Ver tabla ${table.charAt(0).toUpperCase() + table.slice(1)}`,
+                table,
+                columns,
+                columnsToKeep,
+                docs,
+                pageArray,
+                firstAccess: Object.keys(req.query).length === 0 && req.query.constructor === Object,
+                docsCount,
+                isMobile: false
+            })
+        }
     } catch (error) {
         res.status(500).render('error', { title: 'Error', error })
     }

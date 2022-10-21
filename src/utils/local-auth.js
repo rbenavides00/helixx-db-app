@@ -36,7 +36,7 @@ passport.use('local-login', new LocalStrategy({
         if (!isMatch) return done(null, false, req.flash('errorMessage', 'Usuario y/o contraseña inválidas.'))
 
         const log = new Log()
-        log.saveLog(user._id, user.email, 'login', 'Inició sesión', undefined)
+        log.saveLog(user._id, user.email, 'login', `Inició sesión desde dispositivo ${req.useragent.platform}, con el navegador ${req.useragent.browser}`, undefined)
         return done(null, user)
     } catch (error) {
         return done(null, false, req.flash('errorMessage', 'Hubo un error en la conexión en el servidor. Verifique la estabilidad de la base de datos y vuélvalo a intentar.'))

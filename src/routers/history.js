@@ -123,14 +123,27 @@ router.get('/history', auth, async (req, res) => {
 
         const actionTypes = await Log.find().distinct('actionType')
 
-        res.render('history', {
-            title: 'Historial',
-            actionTypes,
-            logs,
-            logsCount,
-            pageArray,
-            noMatch: logsCount === 0
-        })
+        if (req.useragent.isMobile) {
+            res.render('historyMobile', {
+                title: 'Historial',
+                actionTypes,
+                logs,
+                logsCount,
+                pageArray,
+                noMatch: logsCount === 0,
+                isMobile: true
+            })
+        } else {
+            res.render('history', {
+                title: 'Historial',
+                actionTypes,
+                logs,
+                logsCount,
+                pageArray,
+                noMatch: logsCount === 0,
+                isMobile: false
+            })
+        }
     } catch (error) {
         res.status(500).render('error', { title: 'Error', error })
     }
