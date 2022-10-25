@@ -418,7 +418,7 @@ router.post('/tables/view/:table/insertColumn', auth, async (req, res) => {
 
         await insertColumn(connection, table, data)
         const log = new Log()
-        log.saveLog(req.user._id, req.user.email, 'insertColumn', `Se insertó la columna "${column}" en la tabla "${table}" con los valores: "${dataString}"`, table)
+        log.saveLog(req.user._id, req.user.email, 'createColumn', `Se insertó la columna "${column}" en la tabla "${table}" con los valores: "${dataString}"`, table)
         req.flash('successMessage', `Se insertó la nueva columna "${column}" exitosamente.`)
         res.redirect(`/tables/view/${table}`)
 

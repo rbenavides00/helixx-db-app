@@ -66,7 +66,7 @@ router.post('/tables/download/:table', auth, async (req, res) => {
             res.download(savedFilePath, (error) => {
                 if (error) throw error
                 const log = new Log()
-                log.saveLog(req.user._id, req.user.email, 'downloadTable', `Se descargó la tabla "${table}"`, table)
+                log.saveLog(req.user._id, req.user.email, 'downloadTable', `Se descargó la tabla "${table}"`, undefined)
                 fs.unlink(savedFilePath, (error) => {
                     if (error) throw error
                 })
