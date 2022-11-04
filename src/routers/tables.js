@@ -112,9 +112,11 @@ router.post('/tables/upload', auth, async (req, res) => {
         fs.readdir(directory, (error, files) => {
             if (error) throw error
             for (const file of files) {
-                fs.unlink(path.join(directory, file), error => {
-                    if (error) throw error
-                })
+                if (file !== '.gitignore') {
+                    fs.unlink(path.join(directory, file), error => {
+                        if (error) throw error
+                    })
+                }
             }
         })
 
