@@ -182,38 +182,4 @@ router.get('/history/download', auth, async (req, res) => {
     }
 })
 
-// router.get('/test', async (req, res) => {
-//     const today = new Date()
-//     const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
-//     // const oldestLog = await Log.findOne({ sort: { createdAt: -1 } })
-//     const pipeline = [
-//         {
-//             $match: { createdAt: { $gte: firstDay } }
-//         },
-//         {
-//             $sort: { createdAt: -1 }
-//         },
-//         {
-//             $group: {
-//                 _id: {
-//                     $dateToString: { format: "%m/%d/%Y", date: "$createdAt" }
-//                 },
-//                 logs: { $push: '$$ROOT' }
-//             }
-//         }
-//     ]
-//     const logsArray = await Log.aggregate(pipeline)
-//     const sortedArray = logsArray.sort((a, b) => {
-//         return new Date(a._id) - new Date(b._id)
-//     })
-//     const logsCountArray = []
-
-//     sortedArray.forEach((date) => {
-//         logsCountArray.push({ date: date._id, logCount: date.logs.length })
-//     })
-
-//     res.send(sortedArray)
-//     console.log(logsCountArray)
-// })
-
 module.exports = router

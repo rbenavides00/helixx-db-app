@@ -263,13 +263,20 @@ router.post('/tables/view/:table/editObj/:id', auth, async (req, res) => {
 
         const connection = await connect()
         const columns = await getCollFields(connection, table)
-        let updatesArray = []
 
-        for (const key in updates)
-            updatesArray.push(key)
+        // Crea un arreglo de cada llave de las actualizaciones, además de que elimina las llaves que,
+        // al usar trim(), generan un string vacío
+        let updatesKeys = []
+        for (const key in updates) {
+            if (updates[key].trim() === '') {
+                delete updates[key]
+            } else {
+                updatesKeys.push(key)
+            }
+        }
 
         // ERROR HANDLER: Los datos introducidos no concuerdan con el modelo del objeto a editar
-        if (!updatesArray.every(update => columns.includes(update))) {
+        if (!updatesKeys.every(key => columns.includes(key))) {
             req.flash('errorMessage', 'Los valores no concuerdan con el modelo del objeto a editar.')
             return res.redirect(`/tables/view/${table}`)
         }
@@ -290,19 +297,24 @@ router.post('/tables/view/:table/editObj/:id', auth, async (req, res) => {
 
         const doc = await findDoc(connection, table, { _id: id }, { _id: 0 })
 
-        // Genera un String de los valores originales de los campos editados
-        let originalValues = ''
-        for (const keyDoc in doc) {
-            for (const keyUpdate in updates) {
-                if (keyDoc === keyUpdate) originalValues += `[${keyDoc}: ${doc[keyDoc]}]`
+        if (doc) {
+            // Genera un String de los valores originales de los campos editados
+            let originalValues = ''
+            for (const keyDoc in doc) {
+                for (const keyUpdate in updates) {
+                    if (keyDoc === keyUpdate) originalValues += `[${keyDoc}: ${doc[keyDoc]}]`
+                }
             }
-        }
 
-        await findDocAndUpdate(connection, table, { _id: id }, updates)
-        const log = new Log()
-        log.saveLog(req.user._id, req.user.email, 'updateObject', `Se actualizaron los valores del objeto "${doc[Object.keys(doc)[1]]}" en la tabla "${table}": Nuevos valores: ${updatesString}. Valores originales: ${originalValues}`, id)
-        req.flash('successMessage', `Se actualizaron los valores del objeto "${doc[Object.keys(doc)[1]]}" exitosamente.`)
-        res.redirect(`/tables/view/${table}`)
+            await findDocAndUpdate(connection, table, { _id: id }, updates)
+            const log = new Log()
+            log.saveLog(req.user._id, req.user.email, 'updateObject', `Se actualizaron los valores del objeto "${doc[Object.keys(doc)[1]]}" en la tabla "${table}": Nuevos valores: ${updatesString}. Valores originales: ${originalValues}`, id)
+            req.flash('successMessage', `Se actualizaron los valores del objeto "${doc[Object.keys(doc)[1]]}" exitosamente.`)
+            return res.redirect(`/tables/view/${table}`)
+        } else {
+            req.flash('errorMessage', 'Identificación no reconocida.')
+            return res.redirect(`/tables/view/${table}`)
+        }
     } catch (error) {
         res.status(500).render('error', { title: 'Error', error })
     }

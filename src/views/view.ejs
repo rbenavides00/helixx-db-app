@@ -51,7 +51,7 @@
                 <!-- Campo Definir límite -->
                 <label class="mx-1 my-1">Mostrar</label>
                 <input type="number" min="10" max="100" name="limit" placeholder="10" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('limit')) { _%>value="<%= query.get('limit') %>"<%_ } _%>>
-                <label class="mx-1 my-1">registros</label>
+                <label class="mx-1 my-1">objetos</label>
                 <p class="ml-5 my-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-files" viewBox="0 0 16 16">
                         <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
@@ -405,7 +405,7 @@
                         </div>
                         <div class="modal-body">
                             <p>Escriba el nombre de la columna a insertar. Además, escriba el valor que cada celda tendrá por defecto en la nueva columna.</p>
-                            <p>El nombre de la columna no debe ser <strong class="font-weight-bold text-danger">_id</strong>, empezar con un punto, terminar con un punto, tener espacios, ni contener carácteres especiales.</p>
+                            <p>El nombre de la columna debe ser único, y no debe ser <strong class="font-weight-bold text-danger">_id</strong>, empezar con un punto, terminar con un punto, tener espacios, ni contener carácteres especiales.</p>
                             <p>Al guardarse, se ignorará el espacio en blanco antes y después del nombre de la columna que haya ingresado.</p>
                             <label class="form-label float-left">Nombre de la columna</label>
                             <div class="input-group">
