@@ -19,7 +19,6 @@
     "express-useragent": "^1.0.15",
     "mongodb": "^4.8.1",
     "mongoose": "^6.5.2",
-    "morgan": "^1.10.0",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "simple-excel-to-json": "^2.3.0",

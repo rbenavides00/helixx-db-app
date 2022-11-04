@@ -8,7 +8,6 @@
 const path = require('path')
 const express = require('express')
 const engine = require('ejs-mate')
-const morgan = require('morgan')
 const session = require('express-session')
 const flash = require('connect-flash')
 const fileUpload = require('express-fileupload')
@@ -32,7 +31,6 @@ app.set('port', process.env.PORT || 3000)
 app.disable('etag')
 
 // Middlewares
-app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
 app.use(session({
     secret: process.env.SESSION_SECRET,
