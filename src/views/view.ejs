@@ -1,525 +1,246 @@
 <%- layout('layouts/main') %>
 
-    <!-- Header con Título, errores, y usuario en sesión -->
-    <div class="pt-5">
-        <br><br><br>
-        <%- partial('partials/errors') %>
-        <h1>
-            <span>Ver tabla</span>
-            <span class="text-muted"><%= table %></span>
-        </h1>
-        <p>
-            Sesión iniciada como: <strong class="font-weight-bold"><%= user.email %></strong>
-            <span class="badge rounded-pill badge-info"><%= user.role %></span>
-        </p>
-    </div>
+<!-- Header con Título, errores, y usuario en sesión -->
+<div class="pt-5">
+    <br><br><br>
+    <%- include('partials/errors') %>
+    <h1>
+        <span>Ver tabla</span>
+        <span class="text-muted"><%= table %></span>
+    </h1>
+    <p>
+        Sesión iniciada como: <strong class="font-weight-bold"><%= user.email %></strong>
+        <span class="badge rounded-pill badge-info"><%= user.role %></span>
+    </p>
+</div>
 
-    <!-- Cuerpo principal -->
-    <div class="card card-body">
-        <form action="/tables/view/<%= table %>" method="get" id="form_filter">
-            <div class="form-inline">
-                <!-- Campo de búsqueda -->
-                <input type="text" name="search" placeholder="Buscar por palabras clave" size="90" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('search')) { _%>value="<%= query.get('search') %>"<%_ } _%>>
-                <!-- Campo de búsqueda por ID -->
-                <input type="text" name="search_id" placeholder="Buscar por ID" size="25" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('search_id')) { _%>value="<%= query.get('search_id') %>"<%_ } _%>>
-                <!-- Botón Buscar (Submit) -->
-                <button type="submit" form="form_filter" class="btn btn-primary btn-sm ml-auto mr-1 my-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                    </svg>
-                    &nbsp;Buscar
-                </button>
-                <!-- Botón Filtros -->
-                <button type="button" class="btn btn-dark btn-sm mx-1 my-1" data-bs-toggle="modal" data-bs-target="#modal-filters">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
-                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
-                    </svg>
-                    &nbsp;Filtros
-                </button>
-                <!-- Botón Limpiar filtros -->
-                <a href="/tables/view/<%= table %>" class="btn btn-danger btn-sm mx-1 my-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eraser" viewBox="0 0 16 16">
-                        <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
-                    </svg>
-                    &nbsp;Limpiar filtros
-                </a>
-            </div>
-
-
-
-            <div class="form-inline mb-3">
-                <!-- Campo Definir límite -->
-                <label class="mx-1 my-1">Mostrar</label>
-                <input type="number" min="10" max="100" name="limit" placeholder="10" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('limit')) { _%>value="<%= query.get('limit') %>"<%_ } _%>>
-                <label class="mx-1 my-1">objetos</label>
-                <p class="ml-5 my-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-files" viewBox="0 0 16 16">
-                        <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
-                    </svg>
-                    &nbsp;Se encontraron <strong class="font-weight-bold"><%= docsCount %></strong> objetos.
-                </p>
-                <!-- Botón Descargar resultados -->
-                <a type="button" href="/tables/view/<%= table %>/download?<%= query %>" class="btn btn-success btn-sm mb-2 ml-auto my-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                    </svg>
-                    &nbsp;Descargar resultados
-                </a>
-            </div>
-
-
-
-            <!-- Modal Filtros -->
-            <div class="modal fade" id="modal-filters" tabindex="-1" role="dialog" aria-labelledby="modal-filtersLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title" id="modal-filtersLabel">Filtros disponibles</h3>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Seleccione los filtros de su búsqueda. Puede buscar en cada campo de la tabla, ordenar de manera ascendente y descendiente y esconder las columnas que no desea ver:</p>
-                            <%_ columns.forEach((column)=> { _%>
-                            <div class="row mb-1">
-                                <div class="col">
-                                    <div class="input-group">
-                                        <span class="input-group-text border-right-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                                            </svg>
-                                        </span>
-                                        <input type="text" name="search_<%= column %>" placeholder='Buscar en "<%= column %>"' class="form-control" <%_ if (query.get(`search_in_${column}`)) { _%>value="<%= query.get(`search_${column}`) %>"<%_ } _%>>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <select name="sort_<%= column %>" class="custom-select">
-                                        <option value="">Ordenar por</option>
-                                        <option value="1"<% if (query.get(`sort_${column}`) === '1') { %> selected<%_ } %>>Orden ascendente</option>
-                                        <option value="-1"<% if (query.get(`sort_${column}`) === '-1') { %> selected<%_ } _%>>Orden descendiente</option>
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    <div class="custom-control custom-checkbox mt-2">
-                                        <input type="checkbox" class="custom-control-input" name="show_<%= column %>" value="true" id="<%= `show_${column}` %>" <%_ if (query.get(`show_${column}`) || firstAccess) { _%>checked<%_ } _%> >
-                                        <label class="custom-control-label" for="<%= `show_${column}` %>">
-                                            Mostrar columna "<%= column %>"
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <%_ }) _%>
-                        </div>
-                        <div class="modal-footer">
-                            <div class="custom-control custom-switch ml-2 mr-auto">
-                                <input type="checkbox" class="custom-control-input" onClick="toggle(this)" role="switch" id="selectColumns" checked>
-                                <label class="custom-control-label" for="selectColumns">Seleccionar columnas</label>
-                            </div>
-                            <button type="submit" form="form_filter" class="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                                </svg>
-                                &nbsp;Aplicar filtros
-                            </button>
-                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
-                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-                                </svg>
-                                &nbsp;Aceptar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-
-
-        <!-- Tabla -->
-        <div class="overflow-auto">
-            <table class="table table-striped table-bordered table-sm">
-                <thead class="thead-dark">
-                    <tr>
-                        <%_ columnsToKeep.forEach((column)=> { _%>
-                        <th scope="col"><%= column %></th>
-                        <%_ }) _%>
-                        <th style="width: 20%; position: sticky; right: 0; border-left: 1px solid #e6e6e6; white-space: nowrap;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <%_ docs.forEach((doc)=> { _%>
-                    <tr>
-                        <%_ for (let i = 0; i < columnsToKeep.length; i++) { _%>
-                        <td class="align-middle">
-                            <%= doc[columnsToKeep[i]] %>
-                        </td>
-                        <%_ } _%>
-                        <%_ if (docs.indexOf(doc) % 2 === 0) { _%>
-                        <!-- Celda impar -->
-                        <td style="width: 20%; position: sticky; right: 0; background: #f2f2f2; border-left: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6; white-space: nowrap;" class="text-center align-middle">
-                        <%_ } else { _%>
-                        <!-- Celda par -->
-                        <td style="width: 20%; position: sticky; right: 0; background: white; border-left: 1px solid #e6e6e6; white-space: nowrap;" class="text-center align-middle">
-                        <%_ } _%>
-                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modal-edit-<%= doc._id %>">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                                </svg>
-                                &nbsp;Editar
-                            </button>
-                            <a href="/history?affectedObj=<%= doc._id %>" class="btn btn-success btn-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock-history" viewBox="0 0 16 16">
-                                    <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"/>
-                                    <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"/>
-                                    <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
-                                </svg>
-                                &nbsp;Historial
-                            </a>
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete-<%= doc._id %>">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                </svg>
-                                &nbsp;Borrar
-                            </button>
-                        </td>
-                    </tr>
-                    
-
-                    
-                    <!-- Modal Editar <%= doc._id %> -->
-                    <form action="/tables/view/<%= table %>/editObj/<%= doc._id %>" method="post" id="form_edit_<%= doc._id %>">
-                        <div class="modal fade" id="modal-edit-<%= doc._id %>" tabindex="-1" role="dialog" aria-labelledby="modal-edit-<%= doc._id %>Label" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title" id="modal-edit-<%= doc._id %>Label">
-                                            Editar valores de "<%= doc[columns[0]] %>"
-                                        </h4>
-                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                                                </svg>
-                                            </span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Escriba en el campo correspondiente el valor que desea editar. Si no desea editar un valor, deje el campo en blanco.</p>
-                                        <p class="mb-3">Al guardarse, se ignorará el espacio en blanco antes y después de los datos que haya ingresado.</p>
-                                        <%_ columns.forEach((column)=> { _%>
-                                        <label class="form-label float-left">Editar valor de "<%= column %>" </label>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text border-right-0">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-input-cursor-text" viewBox="0 0 16 16">
-                                                    <path fill-rule="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z"/>
-                                                    <path d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z"/>
-                                                </svg>
-                                            </span>
-                                            <input type="text" name="<%= column %>" placeholder='Ingrese el nuevo valor de "<%= column %>"' class="form-control">
-                                        </div>
-                                        <%_ }) _%>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                            Cancelar
-                                        </button>
-                                        <button type="submit" form="form_edit_<%= doc._id %>" class="btn btn-info">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                                            </svg>
-                                            &nbsp;Actualizar datos
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
-
-
-                    <!-- Modal Borrar <%= doc._id %> -->
-                    <form action="/tables/view/<%= table %>/deleteObj/<%= doc._id %>" method="post" id="form_delete_<%= doc._id %>">
-                        <div class="modal fade" id="modal-delete-<%= doc._id %>" tabindex="-1" role="dialog" aria-labelledby="modal-delete-<%= doc._id %>Label" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title" id="modal-delete-<%= doc._id %>Label">
-                                            Borrar objeto "<%= doc[columns[0]] %>"
-                                        </h4>
-                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                                                </svg>
-                                            </span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>
-                                            ¿Está seguro/a que desea eliminar el objeto
-                                            <strong class="font-weight-bold">
-                                                "<%= doc[columns[0]] %>"
-                                            </strong>
-                                            ? Para confirmar su eliminación, favor de escribir el nombre del primer campo del objeto y presione "Borrar objeto".
-                                        </p>
-                                        <label class="form-label float-left">Nombre del objeto a borrar</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text border-right-0">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-input-cursor-text" viewBox="0 0 16 16">
-                                                    <path fill-rule="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z"/>
-                                                    <path d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z"/>
-                                                </svg>
-                                            </span>
-                                            <input type="text" name="confirmation_name" placeholder="Ingrese el nombre del primer campo del objeto a borrar" class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="submit" form="form_delete_<%= doc._id %>" class="btn btn-danger">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                            </svg>
-                                            &nbsp;Borrar objeto
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-
-
-                    
-                    <%_ }) _%>
-                </tbody>
-            </table>
+<!-- Cuerpo principal -->
+<div class="card card-body">
+    <form action="/tables/view/<%= table %>" method="get" id="form_filter">
+        <div class="form-inline">
+            <!-- Campo de búsqueda -->
+            <input type="text" name="search" placeholder="Buscar por palabras clave" size="90" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('search')) { _%>value="<%= query.get('search') %>"<%_ } _%>>
+            <!-- Campo de búsqueda por ID -->
+            <input type="text" name="search_id" placeholder="Buscar por ID" size="25" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('search_id')) { _%>value="<%= query.get('search_id') %>"<%_ } _%>>
+            <!-- Botón Buscar (Submit) -->
+            <button type="submit" form="form_filter" class="btn btn-primary btn-sm ml-auto mr-1 my-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+                &nbsp;Buscar
+            </button>
+            <!-- Botón Filtros -->
+            <button type="button" class="btn btn-dark btn-sm mx-1 my-1" data-bs-toggle="modal" data-bs-target="#modal-filters">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+                </svg>
+                &nbsp;Filtros
+            </button>
+            <!-- Botón Limpiar filtros -->
+            <a href="/tables/view/<%= table %>" class="btn btn-danger btn-sm mx-1 my-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eraser" viewBox="0 0 16 16">
+                    <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
+                </svg>
+                &nbsp;Limpiar filtros
+            </a>
         </div>
 
 
 
-        <!-- Barra de botones (Insertar objeto, Insertar columna, Borrar columna) -->
-        <div class="ml-auto">
-            <button type="button" class="btn btn-primary mt-2 ml-2" data-bs-toggle="modal" data-bs-target="#modal-insertObj">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+        <div class="form-inline mb-3">
+            <!-- Campo Definir límite -->
+            <label class="mx-1 my-1">Mostrar</label>
+            <input type="number" min="10" max="100" name="limit" placeholder="10" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('limit')) { _%>value="<%= query.get('limit') %>"<%_ } _%>>
+            <label class="mx-1 my-1">objetos</label>
+            <p class="ml-5 my-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-files" viewBox="0 0 16 16">
+                    <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
                 </svg>
-                &nbsp;Insertar objeto
-            </button>
-            <button type="button" class="btn btn-dark mt-2 ml-2" data-bs-toggle="modal" data-bs-target="#modal-insertColumn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                &nbsp;Se encontraron <strong class="font-weight-bold"><%= docsCount %></strong> objetos.
+            </p>
+            <!-- Botón Descargar resultados -->
+            <a type="button" href="/tables/view/<%= table %>/download?<%= query %>" class="btn btn-success btn-sm mb-2 ml-auto my-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
                 </svg>
-                &nbsp;Insertar columna
-            </button>
-            <button type="button" class="btn btn-danger mt-2 ml-2" data-bs-toggle="modal" data-bs-target="#modal-deleteColumn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                </svg>
-                &nbsp;Borrar columna
-            </button>
+                &nbsp;Descargar resultados
+            </a>
         </div>
 
-
-
-        <!-- Modal Insertar objeto -->
-        <form action="/tables/view/<%= table %>/insertObj" method="post" id="form_insertObj">
-            <div class="modal fade" id="modal-insertObj" tabindex="-1" role="dialog" aria-labelledby="modal-insertObjLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title" id="modal-insertObjLabel">
-                                Insertar objeto
-                            </h3>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Escriba los valores del objeto a instertar.</p>
-                            <p class="mb-3">Al guardarse, se ignorará el espacio en blanco antes y después de los datos que haya ingresado.</p>
-                            <%_ columns.forEach((column)=> { _%>
-                            <label class="form-label float-left">Definir valor de "<%= column %>" </label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text border-right-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-input-cursor-text" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z"/>
-                                        <path d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z"/>
-                                    </svg>
-                                </span>
-                                <input type="text" name="<%= column %>" placeholder='Ingrese el valor de "<%= column %>"' class="form-control" required>
-                            </div>
-                            <%_ }) _%>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                Cancelar
-                            </button>
-                            <button type="submit" form="form_insertObj" class="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+        <!-- Modal Filtros -->
+        <div class="modal fade" id="modal-filters" tabindex="-1" role="dialog" aria-labelledby="modal-filtersLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="modal-filtersLabel">Filtros disponibles</h3>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
                                 </svg>
-                                &nbsp;Insertar objeto
-                            </button>
-                        </div>
+                            </span>
+                        </button>
                     </div>
-                </div>
-            </div>
-        </form>
-
-
-
-        <!-- Modal Insertar columna -->
-        <form action="/tables/view/<%= table %>/insertColumn" method="post" id="form_insertColumn">
-            <div class="modal fade" id="modal-insertColumn" tabindex="-1" role="dialog" aria-labelledby="modal-insertColumnLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title" id="modal-insertColumnLabel">
-                                Insertar columna
-                            </h3>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Escriba el nombre de la columna a insertar. Además, escriba el valor que cada celda tendrá por defecto en la nueva columna.</p>
-                            <p>El nombre de la columna debe ser único, y no debe ser <strong class="font-weight-bold text-danger">_id</strong>, empezar con un punto, terminar con un punto, tener espacios, ni contener carácteres especiales.</p>
-                            <p>Al guardarse, se ignorará el espacio en blanco antes y después del nombre de la columna que haya ingresado.</p>
-                            <label class="form-label float-left">Nombre de la columna</label>
-                            <div class="input-group">
-                                <span class="input-group-text border-right-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-input-cursor-text" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z"/>
-                                        <path d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z"/>
-                                    </svg>
-                                </span>
-                                <input type="text" name="field" placeholder="Ingrese el nombre de la columna" class="form-control" maxlength="40" pattern='^[a-zA-Z0-9_.-]*$' required>
+                    <div class="modal-body">
+                        <p>Seleccione los filtros de su búsqueda. Puede buscar en cada campo de la tabla, ordenar de manera ascendente y descendiente y esconder las columnas que no desea ver:</p>
+                        <%_ columns.forEach((column)=> { _%>
+                        <div class="row mb-1">
+                            <div class="col">
+                                <div class="input-group">
+                                    <span class="input-group-text border-right-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                        </svg>
+                                    </span>
+                                    <input type="text" name="search_<%= column %>" placeholder='Buscar en "<%= column %>"' class="form-control" <%_ if (query.get(`search_in_${column}`)) { _%>value="<%= query.get(`search_${column}`) %>"<%_ } _%>>
+                                </div>
                             </div>
-                            <label class="form-label float-left mt-3">Valor predeterminado de cada celda</label>
-                            <div class="input-group">
-                                <span class="input-group-text border-right-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-input-cursor-text" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z"/>
-                                        <path d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z"/>
-                                    </svg>
-                                </span>
-                                <input type="text" name="value" placeholder="Ingrese el valor predeterminado de cada celda" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                Cancelar
-                            </button>
-                            <button type="submit" form="form_insertColumn" class="btn btn-dark">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                </svg>
-                                &nbsp;Insertar columna
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-
-
-        <!-- Modal Borrar columna -->
-        <form action="/tables/view/<%= table %>/deleteColumn" method="post" id="form_deleteColumn">
-            <div class="modal fade" id="modal-deleteColumn" tabindex="-1" role="dialog" aria-labelledby="modal-deleteColumnLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title" id="modal-deleteColumnLabel">
-                                Borrar columna
-                            </h3>
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            Elija la columna a eliminar.
-                            <div class="input-group mt-2">
-                                <span class="input-group-text border-right-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                                    </svg>
-                                </span>
-                                <select name="column" class="custom-select" required>
-                                    <option value="">Seleccionar columna</option>
-                                    <%_ columns.forEach((column)=> { _%>
-                                    <option value="<%= column %>"><%= column %></option>
-                                    <%_ }) _%>
+                            <div class="col-3">
+                                <select name="sort_<%= column %>" class="custom-select">
+                                    <option value="">Ordenar por</option>
+                                    <option value="1"<% if (query.get(`sort_${column}`) === '1') { %> selected<%_ } %>>Orden ascendente</option>
+                                    <option value="-1"<% if (query.get(`sort_${column}`) === '-1') { %> selected<%_ } _%>>Orden descendiente</option>
                                 </select>
                             </div>
-                            <p class="mt-4">Para confirmar la eliminación de la columna, escriba su nombre en el siguiente campo:</p>
-                            <label class="form-label float-left">Nombre de la columna a borrar</label>
-                            <div class="input-group">
-                                <span class="input-group-text border-right-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-input-cursor-text" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z"/>
-                                        <path d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z"/>
-                                    </svg>
-                                </span>
-                                <input type="text" name="column_confirmation" placeholder="Ingrese el nombre de la columna a borrar" class="form-control mb-" required>
+                            <div class="col">
+                                <div class="custom-control custom-checkbox mt-2">
+                                    <input type="checkbox" class="custom-control-input" name="show_<%= column %>" value="true" id="<%= `show_${column}` %>" <%_ if (query.get(`show_${column}`) || firstAccess) { _%>checked<%_ } _%> >
+                                    <label class="custom-control-label" for="<%= `show_${column}` %>">
+                                        Mostrar columna "<%= column %>"
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                Cancelar
-                            </button>
-                            <button type="submit" form="form_deleteColumn" class="btn btn-danger">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                </svg>
-                                &nbsp;Borrar columna
-                            </button>
+                        <%_ }) _%>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="custom-control custom-switch ml-2 mr-auto">
+                            <input type="checkbox" class="custom-control-input" onClick="toggle(this)" role="switch" id="selectColumns" checked>
+                            <label class="custom-control-label" for="selectColumns">Seleccionar columnas</label>
                         </div>
+                        <button type="submit" form="form_filter" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            </svg>
+                            &nbsp;Aplicar filtros
+                        </button>
+                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                            </svg>
+                            &nbsp;Aceptar
+                        </button>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
+
+    </form>
+
+
+
+    <!-- Tabla -->
+    <div class="overflow-auto">
+        <table class="table table-striped table-bordered table-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <%_ columnsToKeep.forEach((column)=> { _%>
+                    <th scope="col"><%= column %></th>
+                    <%_ }) _%>
+                    <th style="width: 20%; position: sticky; right: 0; border-left: 1px solid #e6e6e6; white-space: nowrap;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%_ docs.forEach((doc)=> { _%>
+                <tr>
+                    <%_ for (let i = 0; i < columnsToKeep.length; i++) { _%>
+                    <td class="align-middle">
+                        <%= doc[columnsToKeep[i]] %>
+                    </td>
+                    <%_ } _%>
+                    <%_ if (docs.indexOf(doc) % 2 === 0) { _%>
+                    <!-- Celda impar -->
+                    <td style="width: 20%; position: sticky; right: 0; background: #f2f2f2; border-left: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6; white-space: nowrap;" class="text-center align-middle">
+                    <%_ } else { _%>
+                    <!-- Celda par -->
+                    <td style="width: 20%; position: sticky; right: 0; background: white; border-left: 1px solid #e6e6e6; white-space: nowrap;" class="text-center align-middle">
+                    <%_ } _%>
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modal-edit-<%= doc._id %>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                            </svg>
+                            &nbsp;Editar
+                        </button>
+                        <a href="/history?affectedObj=<%= doc._id %>" class="btn btn-success btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock-history" viewBox="0 0 16 16">
+                                <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074.997zm2.004.45a7.003 7.003 0 0 0-.985-.299l.219-.976c.383.086.76.2 1.126.342l-.36.933zm1.37.71a7.01 7.01 0 0 0-.439-.27l.493-.87a8.025 8.025 0 0 1 .979.654l-.615.789a6.996 6.996 0 0 0-.418-.302zm1.834 1.79a6.99 6.99 0 0 0-.653-.796l.724-.69c.27.285.52.59.747.91l-.818.576zm.744 1.352a7.08 7.08 0 0 0-.214-.468l.893-.45a7.976 7.976 0 0 1 .45 1.088l-.95.313a7.023 7.023 0 0 0-.179-.483zm.53 2.507a6.991 6.991 0 0 0-.1-1.025l.985-.17c.067.386.106.778.116 1.17l-1 .025zm-.131 1.538c.033-.17.06-.339.081-.51l.993.123a7.957 7.957 0 0 1-.23 1.155l-.964-.267c.046-.165.086-.332.12-.501zm-.952 2.379c.184-.29.346-.594.486-.908l.914.405c-.16.36-.345.706-.555 1.038l-.845-.535zm-.964 1.205c.122-.122.239-.248.35-.378l.758.653a8.073 8.073 0 0 1-.401.432l-.707-.707z"/>
+                                <path d="M8 1a7 7 0 1 0 4.95 11.95l.707.707A8.001 8.001 0 1 1 8 0v1z"/>
+                                <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
+                            </svg>
+                            &nbsp;Historial
+                        </a>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete-<%= doc._id %>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                            &nbsp;Borrar
+                        </button>
+                    </td>
+                </tr>
+
+                <%- include('partials/modals/objActions.ejs', { doc }) %>
+                
+                <%_ }) _%>
+            </tbody>
+        </table>
     </div>
 
 
 
-    <%- partial('partials/pagination') %>
-    <br>
+    <!-- Barra de botones (Insertar objeto, Insertar columna, Borrar columna) -->
+    <div class="ml-auto">
+        <button type="button" class="btn btn-primary mt-2 ml-2" data-bs-toggle="modal" data-bs-target="#modal-insertObj">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+            </svg>
+            &nbsp;Insertar objeto
+        </button>
+        <button type="button" class="btn btn-dark mt-2 ml-2" data-bs-toggle="modal" data-bs-target="#modal-insertColumn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+            </svg>
+            &nbsp;Insertar columna
+        </button>
+        <button type="button" class="btn btn-danger mt-2 ml-2" data-bs-toggle="modal" data-bs-target="#modal-deleteColumn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+            </svg>
+            &nbsp;Borrar columna
+        </button>
+    </div>
 
-    <!-- SCRIPT: Botón para alternar selección de todos los checkboxes -->
-    <script>
-        function toggle(source) {
-            checkboxes = document.getElementsByClassName('custom-control-input')
-            for (let i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].checked = source.checked
-            }
+    <%- include('partials/modals/tableActions.ejs') %>
+
+</div>
+
+
+
+<%- include('partials/pagination') %>
+<br>
+
+<!-- SCRIPT: Botón para alternar selección de todos los checkboxes -->
+<script>
+    function toggle(source) {
+        checkboxes = document.getElementsByClassName('custom-control-input')
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = source.checked
         }
-    </script>
+    }
+</script>

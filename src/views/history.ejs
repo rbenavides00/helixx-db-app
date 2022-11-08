@@ -1,162 +1,162 @@
 <%- layout('layouts/main') %>
 
-            <!-- Header con Título, errores, y usuario en sesión -->
-            <div class="pt-5">
-                <br><br><br>
-                <%- partial('partials/errors') %>
-                <%_ if (noMatch) { _%>
-                <div class="alert alert-danger alert-dismissible fade show d-flex flex-fill">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
-                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
-                    </svg>
-                    &nbsp;¡No se encontraron resultados! Intente cambiar los filtros de búsqueda e intente de nuevo.
-                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <%_ } _%>
-                <h1>Historial</h1>
-                <p>
-                    Sesión iniciada como: <strong class="font-weight-bold"><%= user.email %></strong>
-                    <span class="badge rounded-pill badge-info"><%= user.role %></span>
-                </p>
-            </div>
+<!-- Header con Título, errores, y usuario en sesión -->
+<div class="pt-5">
+    <br><br><br>
+    <%- include('partials/errors') %>
+    <%_ if (noMatch) { _%>
+    <div class="alert alert-danger alert-dismissible fade show d-flex flex-fill">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+        </svg>
+        &nbsp;¡No se encontraron resultados! Intente cambiar los filtros de búsqueda e intente de nuevo.
+        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <%_ } _%>
+    <h1>Historial</h1>
+    <p>
+        Sesión iniciada como: <strong class="font-weight-bold"><%= user.email %></strong>
+        <span class="badge rounded-pill badge-info"><%= user.role %></span>
+    </p>
+</div>
 
-            <!-- Cuerpo principal -->
-            <div class="card card-body">
-                <form action="/history" method="get" id="form_filter">
-                    <div class="form-inline">
-                        <!-- Campo de búsqueda "user" -->
-                        <label class="mx-1 my-1">Filtrar por: </label>
-                        <input type="text" name="user" size="15" placeholder="Usuario" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('user')) { _%>value="<%= query.get('user') %>" <%_ } _%>>
-                        <!-- Lista desplegable "actionType" -->
-                        <select name="actionType" style="width: 150px" class="custom-select custom-select-sm mx-1 my-1">
-                            <option value="">Tipo de acción</option>
-                            <%_ actionTypes.forEach((actionType) => { _%>
-                            <option <% if (query.get('actionType') === actionType) { %>selected<% } %>><%= actionType %></option>
-                            <%_ }) _%>
-                        </select>
-                        <!-- Campo de búsqueda "affectedObj" -->
-                        <input type="text" name="affectedObj" size="15" placeholder="Objeto afectado" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('affectedObj')) { _%>value="<%= query.get('affectedObj') %>" <%_ } _%>>
-                        <!-- Campo de búsqueda "startDate" -->
-                        <label class="mx-1 my-1">Desde:</label>
-                        <input type="date" name="startDate" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('startDate')) { _%>value="<%= query.get('startDate') %>"<%_ } _%>>
-                        <!-- Campo de búsqueda "endDate" -->
-                        <label class="mx-1 my-1">Hasta:</label>
-                        <input type="date" name="endDate" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('endDate')) { _%>value="<%= query.get('endDate') %>"<%_ } _%>>
-                        <!-- Botón Filtrar (submit) -->
-                        <button type="submit" form="form_filter" class="btn btn-primary btn-sm ml-auto my-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
-                                <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
-                            </svg>
-                            &nbsp;Filtrar
-                        </button>
-                        <!-- Botón Limpiar filtros -->
-                        <a href="/history" class="btn btn-danger btn-sm ml-2 my-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eraser" viewBox="0 0 16 16">
-                                <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
-                            </svg>
-                            &nbsp;Limpiar filtros
-                        </a>
-                    </div>
+<!-- Cuerpo principal -->
+<div class="card card-body">
+    <form action="/history" method="get" id="form_filter">
+        <div class="form-inline">
+            <!-- Campo de búsqueda "user" -->
+            <label class="mx-1 my-1">Filtrar por: </label>
+            <input type="text" name="user" size="15" placeholder="Usuario" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('user')) { _%>value="<%= query.get('user') %>" <%_ } _%>>
+            <!-- Lista desplegable "actionType" -->
+            <select name="actionType" style="width: 150px" class="custom-select custom-select-sm mx-1 my-1">
+                <option value="">Tipo de acción</option>
+                <%_ actionTypes.forEach((actionType) => { _%>
+                <option <% if (query.get('actionType') === actionType) { %>selected<% } %>><%= actionType %></option>
+                <%_ }) _%>
+            </select>
+            <!-- Campo de búsqueda "affectedObj" -->
+            <input type="text" name="affectedObj" size="15" placeholder="Objeto afectado" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('affectedObj')) { _%>value="<%= query.get('affectedObj') %>" <%_ } _%>>
+            <!-- Campo de búsqueda "startDate" -->
+            <label class="mx-1 my-1">Desde:</label>
+            <input type="date" name="startDate" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('startDate')) { _%>value="<%= query.get('startDate') %>"<%_ } _%>>
+            <!-- Campo de búsqueda "endDate" -->
+            <label class="mx-1 my-1">Hasta:</label>
+            <input type="date" name="endDate" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('endDate')) { _%>value="<%= query.get('endDate') %>"<%_ } _%>>
+            <!-- Botón Filtrar (submit) -->
+            <button type="submit" form="form_filter" class="btn btn-primary btn-sm ml-auto my-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+                </svg>
+                &nbsp;Filtrar
+            </button>
+            <!-- Botón Limpiar filtros -->
+            <a href="/history" class="btn btn-danger btn-sm ml-2 my-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eraser" viewBox="0 0 16 16">
+                    <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
+                </svg>
+                &nbsp;Limpiar filtros
+            </a>
+        </div>
 
-                    <div class="form-inline mb-3">
-                        <!-- Campo Definir límite -->
-                        <label class="mx-1 my-1">Mostrar</label>
-                        <input type="number" min="10" max="100" name="limit" placeholder="10" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('limit')) { _%>value="<%= query.get('limit') %>"<%_ } _%>>
-                        <label class="mx-1 my-1">registros</label>
-                        <!-- Lista deplegable "sortOrder" -->
-                        <select name="sortOrder" class="custom-select custom-select-sm ml-3 my-1">
-                            <option value="">Ordenar por</option>
-                            <option value="-1"<% if (query.get('sortOrder') === '-1') { %> selected<%_ } _%>>Más reciente</option>
-                            <option value="1"<% if (query.get('sortOrder') === '1') { %> selected<%_ } _%>>Más antiguo</option>
-                        </select>
-                        <p class="ml-5 my-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-files" viewBox="0 0 16 16">
-                                <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
-                            </svg>
-                            &nbsp;Se encontraron <strong class="font-weight-bold"><%= logsCount %></strong> registros.
-                        </p>
-                        <!-- Botón Descargar resultados -->
-                        <a type="button" href="/history/download/?<%= query %>" class="btn btn-success btn-sm ml-auto my-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                            </svg>
-                            &nbsp;Descargar resultados
-                        </a>
-                    </div>
-                </form>
+        <div class="form-inline mb-3">
+            <!-- Campo Definir límite -->
+            <label class="mx-1 my-1">Mostrar</label>
+            <input type="number" min="10" max="100" name="limit" placeholder="10" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('limit')) { _%>value="<%= query.get('limit') %>"<%_ } _%>>
+            <label class="mx-1 my-1">registros</label>
+            <!-- Lista deplegable "sortOrder" -->
+            <select name="sortOrder" class="custom-select custom-select-sm ml-3 my-1">
+                <option value="">Ordenar por</option>
+                <option value="-1"<% if (query.get('sortOrder') === '-1') { %> selected<%_ } _%>>Más reciente</option>
+                <option value="1"<% if (query.get('sortOrder') === '1') { %> selected<%_ } _%>>Más antiguo</option>
+            </select>
+            <p class="ml-5 my-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-files" viewBox="0 0 16 16">
+                    <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
+                </svg>
+                &nbsp;Se encontraron <strong class="font-weight-bold"><%= logsCount %></strong> registros.
+            </p>
+            <!-- Botón Descargar resultados -->
+            <a type="button" href="/history/download/?<%= query %>" class="btn btn-success btn-sm ml-auto my-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                </svg>
+                &nbsp;Descargar resultados
+            </a>
+        </div>
+    </form>
 
-                <%_ if (!noMatch) { _%>
-                <!-- Tabla -->
-                <div class="overflow-auto">
-                    <table class="table table-striped table-bordered table-sm">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col" style="width: 22%">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" fill="currentColor" class="bi bi-calendar-event" viewBox="0 0 16 16">
-                                        <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
-                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                                    </svg>
-                                    &nbsp;Fecha y hora de acción
-                                </th>
-                                <th scope="col">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-                                    </svg>
-                                    &nbsp;Usuario
-                                </th>
-                                <th scope="col">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-tags" viewBox="0 0 16 16">
-                                        <path d="M3 2v4.586l7 7L14.586 9l-7-7H3zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2z"/>
-                                        <path d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1v5.086z"/>
-                                    </svg>
-                                    &nbsp;Tipo de acción
-                                </th>
-                                <th scope="col">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-journal-text" viewBox="0 0 16 16">
-                                        <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
-                                        <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
-                                        <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
-                                    </svg>
-                                    &nbsp;Descripción de acción
-                                </th>
-                                <th scope="col">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
-                                        <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
-                                    </svg>
-                                    &nbsp;Objeto afectado
-                                </th>
-                            </tr>
-                        </thead>
-                            <tbody>
-                                <%_ logs.forEach((log) => { _%>
-                                <tr>
-                                    <td class="align-middle">
-                                        <%= log.createdAt.toLocaleDateString('es-ES', { weekday:'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h12' }) %>
-                                    </td>
-                                    <td class="align-middle">
-                                        <%= log.email %>
-                                    </td>
-                                    <td class="align-middle">
-                                        <%= log.actionType %>
-                                    </td>
-                                    <td class="align-middle">
-                                        <%= log.actionDesc %>
-                                    </td>
-                                    <td class="align-middle">
-                                        <%= log.affectedObj %>
-                                    </td>
-                                </tr>
-                            <%_ }) _%>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <%_ if (!noMatch) { _%>
+    <!-- Tabla -->
+    <div class="overflow-auto">
+        <table class="table table-striped table-bordered table-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" style="width: 22%">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" fill="currentColor" class="bi bi-calendar-event" viewBox="0 0 16 16">
+                            <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                        </svg>
+                        &nbsp;Fecha y hora de acción
+                    </th>
+                    <th scope="col">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                        </svg>
+                        &nbsp;Usuario
+                    </th>
+                    <th scope="col">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-tags" viewBox="0 0 16 16">
+                            <path d="M3 2v4.586l7 7L14.586 9l-7-7H3zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2z"/>
+                            <path d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1v5.086z"/>
+                        </svg>
+                        &nbsp;Tipo de acción
+                    </th>
+                    <th scope="col">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-journal-text" viewBox="0 0 16 16">
+                            <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
+                            <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
+                        </svg>
+                        &nbsp;Descripción de acción
+                    </th>
+                    <th scope="col">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
+                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                        </svg>
+                        &nbsp;Objeto afectado
+                    </th>
+                </tr>
+            </thead>
+                <tbody>
+                    <%_ logs.forEach((log) => { _%>
+                    <tr>
+                        <td class="align-middle">
+                            <%= log.createdAt.toLocaleDateString('es-ES', { weekday:'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h12' }) %>
+                        </td>
+                        <td class="align-middle">
+                            <%= log.email %>
+                        </td>
+                        <td class="align-middle">
+                            <%= log.actionType %>
+                        </td>
+                        <td class="align-middle">
+                            <%= log.actionDesc %>
+                        </td>
+                        <td class="align-middle">
+                            <%= log.affectedObj %>
+                        </td>
+                    </tr>
+                <%_ }) _%>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-            <%- partial('partials/pagination') %>
-            <%_ } _%>
-            <br>        
+<%- include('partials/pagination') %>
+<%_ } _%>
+<br>        

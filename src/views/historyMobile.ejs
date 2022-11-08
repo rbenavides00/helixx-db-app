@@ -1,153 +1,153 @@
 <%- layout('layouts/main') %>
 
-            <!-- Header con Título, errores, y usuario en sesión -->
-            <div class="pt-5">
-                <br><br><br>
-                <%- partial('partials/errors') %>
-                <%_ if (noMatch) { _%>
-                <div class="alert alert-danger alert-dismissible fade show d-flex flex-fill">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
-                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                        <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
-                    </svg>
-                    &nbsp;¡No se encontraron resultados! Intente cambiar los filtros de búsqueda e intente de nuevo.
-                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+<!-- Header con Título, errores, y usuario en sesión -->
+<div class="pt-5">
+    <br><br><br>
+    <%- include('partials/errors') %>
+    <%_ if (noMatch) { _%>
+    <div class="alert alert-danger alert-dismissible fade show d-flex flex-fill">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+        </svg>
+        &nbsp;¡No se encontraron resultados! Intente cambiar los filtros de búsqueda e intente de nuevo.
+        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <%_ } _%>
+    <h1>Historial</h1>
+    <p>
+        Sesión iniciada como: <strong class="font-weight-bold"><%= user.email %></strong>
+        <span class="badge rounded-pill badge-info"><%= user.role %></span>
+    </p>
+</div>
+
+<div class="form-inline">
+    <!-- Botón Filtros -->
+    <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#modal-filters">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+            <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+        </svg>
+        &nbsp;Filtros
+    </button>
+    <!-- Botón Limpiar filtros -->
+    <a href="/history" class="btn btn-danger btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eraser" viewBox="0 0 16 16">
+            <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
+        </svg>
+        &nbsp;Limpiar filtros
+    </a>
+    <!-- Botón Descargar resultados -->
+    <a type="button" href="/history/download/?<%= query %>" class="btn btn-success btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+        </svg>
+        &nbsp;Descargar
+    </a>
+</div>
+
+
+
+<div class="form-inline mt-1">
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-files" viewBox="0 0 16 16">
+            <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
+        </svg>
+        &nbsp;Se encontraron <strong class="font-weight-bold"><%= logsCount %></strong> registros.
+    </p>
+</div>
+
+
+
+<!-- Modal Filtros -->
+<form action="/history" method="get" id="form_filter">
+    <div class="modal fade" id="modal-filters" tabindex="-1" role="dialog" aria-labelledby="modal-filtersLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal-filtersLabel">Filtros disponibles</h3>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                            </svg>
+                        </span>
                     </button>
                 </div>
-                <%_ } _%>
-                <h1>Historial</h1>
-                <p>
-                    Sesión iniciada como: <strong class="font-weight-bold"><%= user.email %></strong>
-                    <span class="badge rounded-pill badge-info"><%= user.role %></span>
-                </p>
-            </div>
-
-            <div class="form-inline">
-                <!-- Botón Filtros -->
-                <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#modal-filters">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
-                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
-                    </svg>
-                    &nbsp;Filtros
-                </button>
-                <!-- Botón Limpiar filtros -->
-                <a href="/history" class="btn btn-danger btn-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eraser" viewBox="0 0 16 16">
-                        <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414l-3.879-3.879zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
-                    </svg>
-                    &nbsp;Limpiar filtros
-                </a>
-                <!-- Botón Descargar resultados -->
-                <a type="button" href="/history/download/?<%= query %>" class="btn btn-success btn-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-                    </svg>
-                    &nbsp;Descargar
-                </a>
-            </div>
-
-
-
-            <div class="form-inline mt-1">
-                <p>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-files" viewBox="0 0 16 16">
-                        <path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
-                    </svg>
-                    &nbsp;Se encontraron <strong class="font-weight-bold"><%= logsCount %></strong> registros.
-                </p>
-            </div>
-
-
-
-            <!-- Modal Filtros -->
-            <form action="/history" method="get" id="form_filter">
-                <div class="modal fade" id="modal-filters" tabindex="-1" role="dialog" aria-labelledby="modal-filtersLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3 class="modal-title" id="modal-filtersLabel">Filtros disponibles</h3>
-                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                                        </svg>
-                                    </span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Seleccione los filtros de su búsqueda:</p>
-                                <div class="row">
-                                    <div class="col">
-                                        <input type="text" name="user" size="15" placeholder="Usuario" class="form-control form-control-sm my-1" <%_ if (query.get('user')) { _%>value="<%= query.get('user') %>" <%_ } _%>>
-                                        <!-- Lista desplegable "actionType" -->
-                                        <select name="actionType" class="custom-select custom-select-sm my-1">
-                                            <option value="">Tipo de acción</option>
-                                            <%_ actionTypes.forEach((actionType) => { _%>
-                                            <option <% if (query.get('actionType') === actionType) { %>selected<% } %>><%= actionType %></option>
-                                            <%_ }) _%>
-                                        </select>
-                                        <!-- Campo de búsqueda "startDate" -->
-                                        <label class="my-1">Desde:</label>
-                                        <input type="date" name="startDate" class="form-control form-control-sm" <%_ if (query.get('startDate')) { _%>value="<%= query.get('startDate') %>"<%_ } _%>>
-                                    </div>
-                                    <div class="col">
-                                        <!-- Campo de búsqueda "affectedObj" -->
-                                        <input type="text" name="affectedObj" size="15" placeholder="Objeto afectado" class="form-control form-control-sm my-1" <%_ if (query.get('affectedObj')) { _%>value="<%= query.get('affectedObj') %>" <%_ } _%>>
-                                        <!-- Lista deplegable "sortOrder" -->
-                                        <select name="sortOrder" class="custom-select custom-select-sm my-1">
-                                            <option value="">Ordenar por</option>
-                                            <option value="-1"<% if (query.get('sortOrder') === '-1') { %> selected<%_ } _%>>Más reciente</option>
-                                            <option value="1"<% if (query.get('sortOrder') === '1') { %> selected<%_ } _%>>Más antiguo</option>
-                                        </select>
-                                        <!-- Campo de búsqueda "endDate" -->
-                                        <label class="my-1">Hasta:</label>
-                                        <input type="date" name="endDate" class="form-control form-control-sm" <%_ if (query.get('endDate')) { _%>value="<%= query.get('endDate') %>"<%_ } _%>>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col">
-                                        <!-- Campo Definir límite -->
-                                        <div class="input-group">
-                                            <label class="mx-1 mt-2">Mostrar</label>
-                                            <input type="number" min="10" max="100" name="limit" placeholder="10" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('limit')) { _%>value="<%= query.get('limit') %>"<%_ } _%>>
-                                            <label class="mx-1 mt-2">registros</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    Cancelar
-                                </button>
-                                <button type="submit" form="form_filter" class="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
-                                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
-                                </svg>
-                                &nbsp;Filtrar
-                            </button>
+                <div class="modal-body">
+                    <p>Seleccione los filtros de su búsqueda:</p>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" name="user" size="15" placeholder="Usuario" class="form-control form-control-sm my-1" <%_ if (query.get('user')) { _%>value="<%= query.get('user') %>" <%_ } _%>>
+                            <!-- Lista desplegable "actionType" -->
+                            <select name="actionType" class="custom-select custom-select-sm my-1">
+                                <option value="">Tipo de acción</option>
+                                <%_ actionTypes.forEach((actionType) => { _%>
+                                <option <% if (query.get('actionType') === actionType) { %>selected<% } %>><%= actionType %></option>
+                                <%_ }) _%>
+                            </select>
+                            <!-- Campo de búsqueda "startDate" -->
+                            <label class="my-1">Desde:</label>
+                            <input type="date" name="startDate" class="form-control form-control-sm" <%_ if (query.get('startDate')) { _%>value="<%= query.get('startDate') %>"<%_ } _%>>
+                        </div>
+                        <div class="col">
+                            <!-- Campo de búsqueda "affectedObj" -->
+                            <input type="text" name="affectedObj" size="15" placeholder="Objeto afectado" class="form-control form-control-sm my-1" <%_ if (query.get('affectedObj')) { _%>value="<%= query.get('affectedObj') %>" <%_ } _%>>
+                            <!-- Lista deplegable "sortOrder" -->
+                            <select name="sortOrder" class="custom-select custom-select-sm my-1">
+                                <option value="">Ordenar por</option>
+                                <option value="-1"<% if (query.get('sortOrder') === '-1') { %> selected<%_ } _%>>Más reciente</option>
+                                <option value="1"<% if (query.get('sortOrder') === '1') { %> selected<%_ } _%>>Más antiguo</option>
+                            </select>
+                            <!-- Campo de búsqueda "endDate" -->
+                            <label class="my-1">Hasta:</label>
+                            <input type="date" name="endDate" class="form-control form-control-sm" <%_ if (query.get('endDate')) { _%>value="<%= query.get('endDate') %>"<%_ } _%>>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <!-- Campo Definir límite -->
+                            <div class="input-group">
+                                <label class="mx-1 mt-2">Mostrar</label>
+                                <input type="number" min="10" max="100" name="limit" placeholder="10" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('limit')) { _%>value="<%= query.get('limit') %>"<%_ } _%>>
+                                <label class="mx-1 mt-2">registros</label>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
-
-
-
-            <%_ if (!noMatch) { _%>
-            <%_ logs.forEach((log) => { _%>
-            <div class="card border-primary mb-3">
-                <div class="card-header text-white bg-dark"><%= log.createdAt.toLocaleDateString('es-ES', { weekday:'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h12' }) %></div>
-                <div class="card-body">
-                    <p class="card-text"><strong class="font-weight-bold">Usuario: </strong><%= log.email %></p>
-                    <p class="card-text"><strong class="font-weight-bold">Tipo de acción: </strong><%= log.actionType %></p>
-                    <p class="card-text"><strong class="font-weight-bold">Descripción: </strong><%= log.actionDesc %></p>
-                    <p class="card-text"><strong class="font-weight-bold">Objeto afectado: </strong><%= log.affectedObj %></p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" form="form_filter" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+                    </svg>
+                    &nbsp;Filtrar
+                </button>
                 </div>
             </div>
-            <%_ }) _%> 
+        </div>
+    </div>
+</form>
 
-            <%- partial('partials/pagination') %>
-            <%_ } _%>
-            <br>        
+
+
+<%_ if (!noMatch) { _%>
+<%_ logs.forEach((log) => { _%>
+<div class="card border-primary mb-3">
+    <div class="card-header text-white bg-dark"><%= log.createdAt.toLocaleDateString('es-ES', { weekday:'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h12' }) %></div>
+    <div class="card-body">
+        <p class="card-text"><strong class="font-weight-bold">Usuario: </strong><%= log.email %></p>
+        <p class="card-text"><strong class="font-weight-bold">Tipo de acción: </strong><%= log.actionType %></p>
+        <p class="card-text"><strong class="font-weight-bold">Descripción: </strong><%= log.actionDesc %></p>
+        <p class="card-text"><strong class="font-weight-bold">Objeto afectado: </strong><%= log.affectedObj %></p>
+    </div>
+</div>
+<%_ }) _%> 
+
+<%- include('partials/pagination') %>
+<%_ } _%>
+<br>        

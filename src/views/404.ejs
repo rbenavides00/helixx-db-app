@@ -1,19 +1,19 @@
 <%- layout('layouts/main') %>
 
-            <div class="pt-5">
-                <br><br><br>
-                <h1>Error 404: Página no encontrada</h1>
-                <p>
-                    Sesión iniciada como: <strong class="font-weight-bold"><%= user.email %></strong>
-                    <span class="badge rounded-pill badge-info"><%= user.role %></span>
-                </p>
-            </div>
+<div class="pt-5">
+    <br><br><br>
+    <h1>Error 404: Página no encontrada</h1>
+    <p>
+        Sesión iniciada como: <strong class="font-weight-bold"><%= user.email %></strong>
+        <span class="badge rounded-pill badge-info"><%= user.role %></span>
+    </p>
+</div>
 
-            <div class="card card-body">
-                <h3><%= errorTitle %></h3>
-                <p>La solicitud del URL <strong class="font-weight-bold">
-                    <%= unknownUrl %>
-                </strong> no fue encontrada en el servidor. Regresa a <strong class="font-weight-bold">
-                    <a href="<%= url %>"><%= url %></a>
-                </strong> para encontrar una dirección existente.</p>
-            </div>
+<div class="card card-body">
+    <h3><%= errorTitle %></h3>
+    <p>La solicitud del URL <strong class="font-weight-bold">
+        <%= unknownUrl %>
+    </strong> no fue encontrada en el servidor. Regresa a <strong class="font-weight-bold">
+        <a href="<%= url %>"><%= url %></a>
+    </strong> para encontrar una dirección existente.</p>
+</div>
