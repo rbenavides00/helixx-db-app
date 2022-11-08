@@ -49,10 +49,10 @@ app.use((req, res, next) => {
 })
 app.use(fileUpload({
     limits: {
-        fileSize: 150 * 1024 // 150 KB
+        fileSize: process.env.FILE_LIMIT * 1024 // 150 KB DEFAULT
     },
     limitHandler: (req, res, next) => {
-        req.flash('warningMessage', `El archivo ha superado el límite de subida (150 KB).`)
+        req.flash('warningMessage', `El archivo ha superado el límite de subida (${process.env.FILE_LIMIT} KB).`)
         next()
     }
 }))
