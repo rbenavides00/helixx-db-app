@@ -103,7 +103,7 @@ router.post('/tables/upload', auth, async (req, res) => {
             table.endsWith('.') ||
             table.length === 0 ||
             table.length > 40) {
-            req.flash('errorMessage', 'Favor de coincidir el formato solicitado de nombre de tabla. El nombre de la tabla no debe ser "users", "logs", ni "tables"; empezar con "system.", empezar con un punto, terminar con un punto ni contener carácteres especiales.')
+            req.flash('errorMessage', 'Favor de coincidir el formato solicitado de nombre de tabla. El nombre de la tabla no debe ser "users", "logs", ni "tables"; empezar con "system.", empezar con un punto, terminar con un punto ni contener caracteres especiales.')
             return res.redirect('/tables')
         }
 
@@ -159,7 +159,7 @@ router.post('/tables/upload', auth, async (req, res) => {
                 key.startsWith('.') ||
                 key.endsWith('.') ||
                 key.length > 40) {
-                req.flash('errorMessage', `Archivo rechazado. Las columnas de las tablas no pueden ser "_id", tener espacios en blanco, empezar con un punto, terminar con un punto, tener más de 40 carácteres, ni contener carácteres especiales.`)
+                req.flash('errorMessage', `Archivo rechazado. Las columnas de las tablas no pueden ser "_id", tener espacios en blanco, empezar con un punto, terminar con un punto, tener más de 40 caracteres, ni contener caracteres especiales.`)
                 return res.redirect('/tables')
             }
             ++sampleColumns

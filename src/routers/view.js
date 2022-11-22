@@ -415,7 +415,7 @@ router.post('/tables/view/:table/insertColumn', auth, async (req, res) => {
             column.endsWith('.') ||
             column.length === 0 ||
             column.length > 40) {
-            req.flash('errorMessage', 'Favor de coincidir el formato solicitado de nombre de la columna. El nombre de la columna no debe ser "_id", empezar con un punto, terminar con un punto, ni contener carácteres especiales.')
+            req.flash('errorMessage', 'Favor de coincidir el formato solicitado de nombre de la columna. El nombre de la columna no debe ser "_id", empezar con un punto, terminar con un punto, ni contener caracteres especiales.')
             return res.redirect(`/tables/view/${table}`)
         }
 

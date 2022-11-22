@@ -56,7 +56,7 @@ router.post('/users/signup', auth, async (req, res) => {
             return res.redirect('/users')
         }
         if (password.length < 8) {
-            req.flash('errorMessage', 'Las contraseña es muy débil. La contraseña debe tener como mínimo 8 carácteres.')
+            req.flash('errorMessage', 'Las contraseña es muy débil. La contraseña debe tener como mínimo 8 caracteres.')
             return res.redirect('/users')
         }
         const user = new User({ email, password, role: 'user' })
@@ -65,6 +65,43 @@ router.post('/users/signup', auth, async (req, res) => {
         log.saveLog(req.user._id, req.user.email, 'createUser', `Se creó el usuario "${email}"`, email)
         req.flash('successMessage', `Se creó el usuario "${email}".`)
         return res.redirect('/users')
+    } catch (error) {
+        res.status(500).render('error', { title: 'Error', error })
+    }
+})
+
+// POST /users/change_password (Cambiar contraseña)
+router.post('/users/change_password', auth, async (req, res) => {
+    try {
+        let { password, new_password, confirm_new_password } = req.body
+
+        if (!password || !new_password || !confirm_new_password) {
+            req.flash('errorMessage', 'Llena todos los campos.')
+            return res.redirect('/users')
+        }
+
+        const user = await User.findOne({ _id: req.user._id })
+        const isMatch = await user.comparePassword(password)
+
+        if (isMatch) {
+            if (new_password !== confirm_new_password) {
+                req.flash('errorMessage', 'Las contraseñas no coinciden.')
+                return res.redirect('/users')
+            }
+            if (new_password.length < 8) {
+                req.flash('errorMessage', 'Las contraseña es muy débil. La contraseña debe tener como mínimo 8 caracteres.')
+                return res.redirect('/users')
+            }
+            user.password = new_password
+            await user.save()
+            const log = new Log()
+            log.saveLog(req.user._id, req.user.email, 'changePassword', `Se realizó un cambio de contraseña a su usuario.`, req.user.email)
+            req.flash('successMessage', `Se realizó el cambio de contraseña a su usuario exitosamente.`)
+            return res.redirect('/users')
+        } else {
+            req.flash('errorMessage', 'La contraseña actual que ingresó es incorrecta.')
+            return res.redirect('/users')
+        }
     } catch (error) {
         res.status(500).render('error', { title: 'Error', error })
     }
@@ -113,7 +150,7 @@ router.post('/admin/signup', async (req, res) => {
             return res.status(400).send('[HELIXX-DB]: Llena todos los campos.')
 
         if (password.length < 8)
-            return res.status(400).send('[HELIXX-DB]: Las contraseña es muy débil. La contraseña debe tener como mínimo 8 carácteres.')
+            return res.status(400).send('[HELIXX-DB]: Las contraseña es muy débil. La contraseña debe tener como mínimo 8 caracteres.')
         
         const userFound = await User.findOne({ email })
 
@@ -125,8 +162,8 @@ router.post('/admin/signup', async (req, res) => {
         const user = new User({ email, password, role: 'admin' })
         await user.save()
         const log = new Log()
-        log.saveLog(user._id, email, 'createAdmin', `Se creó el usuario administrador "${email}"`, email)
-        return res.status(201).send(`[HELIXX-DB]: Se creó el usuario administrador "${email}" exitosamente.`)
+        log.saveLog(user._id, email, 'createAdmin', `Se creó el administrador "${email}" con herramientas de admnistrador`, email)
+        return res.status(201).send(`[HELIXX-DB]: Se creó el administrador "${email}" exitosamente.`)
     } catch (error) {
         res.status(500).send(`[HELIXX-DB]: Se obtuvo el siguiente error: ${error}`)
     }
@@ -148,13 +185,47 @@ router.post('/admin/delete', async (req, res) => {
             if (confirmation_email === user.email && secret === process.env.ADMIN_SECRET) {
                 await User.findOneAndDelete({ email })
                 const log = new Log()
-                log.saveLog(user._id, user.email, 'deleteAdmin', `Se eliminó el usuario administrador ${user.email}`, user.email)
-                return res.status(200).send(`[HELIXX-DB]: Se eliminó el usuario administrador "${email}" exitosamente.`)
+                log.saveLog(user._id, user.email, 'deleteAdmin', `Se eliminó el administrador ${user.email} con herramientas de admnistrador`, user.email)
+                return res.status(200).send(`[HELIXX-DB]: Se eliminó el administrador "${email}" exitosamente.`)
             } else {
                 return res.status(400).send('[HELIXX-DB]: Los correos electrónicos o el secreto de administrador no concuerdan.')
             }
         } else {
             return res.status(400).send('[HELIXX-DB]: No se encontró un administrador con ese correo electrónico.')
+        }
+    } catch (error) {
+        res.status(500).send(`[HELIXX-DB]: Se obtuvo el siguiente error: ${error}`)
+    }
+})
+
+// POST /admin/change_password (Cambiar contraseña como administrador)
+router.post('/admin/change_password', async (req, res) => {
+    try {
+        let { email, password, confirm_password, secret } = req.body
+        email = email.trim().toLowerCase()
+
+        if (!validator.isEmail(email))
+            return res.status(400).send('[HELIXX-DB]: Ingrese un correo electrónico válido.')
+
+        if (!email || !password || !confirm_password || !secret)
+            return res.status(400).send('[HELIXX-DB]: Llena todos los campos.')
+
+        if (password.length < 8)
+            return res.status(400).send('[HELIXX-DB]: Las contraseña es muy débil. La contraseña debe tener como mínimo 8 caracteres.')
+
+        if (password !== confirm_password || secret !== process.env.ADMIN_SECRET)
+            return res.status(400).send('[HELIXX-DB]: Las contraseñas o el secreto de administrador no coinciden.')
+
+        const user = await User.findOne({ email })
+
+        if (user) {
+            user.password = password
+            await user.save()
+            const log = new Log()
+            log.saveLog(user._id, email, 'changePasswordAdmin', `Se cambió la contraseña del usuario "${email}" con herramientas de admnistrador`, email)
+            return res.status(200).send(`[HELIXX-DB]: Se cambió la contraseña del usuario "${email}" exitosamente.`)
+        } else {
+            return res.status(400).send('[HELIXX-DB]: No se encontró un usuario con ese correo electrónico.')
         }
     } catch (error) {
         res.status(500).send(`[HELIXX-DB]: Se obtuvo el siguiente error: ${error}`)
