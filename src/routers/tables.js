@@ -94,7 +94,7 @@ router.post('/tables/upload', auth, async (req, res) => {
             return res.redirect('/tables')
         }
         // ERROR HANDLER: Nombre de archivo inválido
-        if (!table.match(/^[a-zA-Z0-9_.-]*$/) ||
+        if (!table.match(/^[a-zñáéíóúüA-ZÑÁÉÍÓÚÜ0-9_.-]*$/) ||
             table.startsWith('system.') ||
             table === 'users' ||
             table === 'logs' ||
@@ -154,7 +154,7 @@ router.post('/tables/upload', auth, async (req, res) => {
 
         // ERROR HANDLER: Alguna columna tiene un formato inválido
         for (const key in sample) {
-            if (!key.match(/^[a-zA-Z0-9_ .-]*$/) ||
+            if (!key.match(/^[a-zñáéíóúüA-ZÑÁÉÍÓÚÜ0-9_ .-]*$/) ||
                 key === '_id' ||
                 key.startsWith('.') ||
                 key.endsWith('.') ||

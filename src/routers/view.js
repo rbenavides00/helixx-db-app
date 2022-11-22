@@ -409,7 +409,7 @@ router.post('/tables/view/:table/insertColumn', auth, async (req, res) => {
         const dataString = `[${column}: ${value}]`
 
         // ERROR HANDLER: Nombre de columna inválido
-        if (!column.match(/^[a-zA-Z0-9_.-]*$/) ||
+        if (!column.match(/^[a-zñáéíóúüA-ZÑÁÉÍÓÚÜ0-9_.-]*$/) ||
             column.match('_id') ||
             column.startsWith('.') ||
             column.endsWith('.') ||
