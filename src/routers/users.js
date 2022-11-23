@@ -95,7 +95,7 @@ router.post('/users/change_password', auth, async (req, res) => {
             user.password = new_password
             await user.save()
             const log = new Log()
-            log.saveLog(req.user._id, req.user.email, 'changePassword', `Se realizó un cambio de contraseña a su usuario.`, req.user.email)
+            log.saveLog(req.user._id, req.user.email, 'changePassword', `Se realizó un cambio de contraseña a su usuario`, req.user.email)
             req.flash('successMessage', `Se realizó el cambio de contraseña a su usuario exitosamente.`)
             return res.redirect('/users')
         } else {

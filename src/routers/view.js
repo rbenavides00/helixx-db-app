@@ -173,9 +173,10 @@ router.get('/tables/view/:table/download', auth, async (req, res) => {
         }
 
         // ERROR HANDLER: Evitar descargar la tabla Users y Logs
-        if (table === 'users' || table === 'logs' || table === 'tables')
+        if (table === 'users' || table === 'logs' || table === 'tables') {
             req.flash('errorMessage', 'Acción denegada.')
             return res.redirect('/tables')
+        }
 
         let docs
         var filters = {}
@@ -430,7 +431,7 @@ router.post('/tables/view/:table/insertColumn', auth, async (req, res) => {
 
         await insertColumn(connection, table, data)
         const log = new Log()
-        log.saveLog(req.user._id, req.user.email, 'createColumn', `Se insertó la columna "${column}" en la tabla "${table}" con los valores: "${dataString}"`, table)
+        log.saveLog(req.user._id, req.user.email, 'createColumn', `Se insertó la columna "${column}" en la tabla "${table}" con los valores: ${dataString}`, table)
         req.flash('successMessage', `Se insertó la nueva columna "${column}" exitosamente.`)
         res.redirect(`/tables/view/${table}`)
 
