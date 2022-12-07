@@ -335,13 +335,19 @@ router.post('/tables/view/:table/deleteObj/:id', auth, async (req, res) => {
 
         const connection = await connect()
         const doc = await findDoc(connection, table, { _id: id }, { _id: 0 })
+        const docsCount = await getDocsCount(connection, table, {})
+
+        if (docsCount <= 2) {
+            req.flash('errorMessage', 'No se pueden borrar más objetos. El mínimo de objetos en una tabla es 2.')
+            return res.redirect(`/tables/view/${table}`)
+        }
 
         if (doc) {
             if (req.body.confirmation_name === doc[Object.keys(doc)[1]]) {
                 await findDocAndDelete(connection, table, { _id: id })
                 const log = new Log()
                 log.saveLog(req.user._id, req.user.email, 'deleteObject', `Se eliminó el objeto "${doc[Object.keys(doc)[1]]}" de la tabla "${table}"`, doc._id)
-                req.flash('successMessage', `El objeto ${doc[Object.keys(doc)[1]]} ha sido eliminado.`)
+                req.flash('successMessage', `El objeto "${doc[Object.keys(doc)[1]]}" ha sido eliminado.`)
                 return res.redirect(`/tables/view/${table}`)
             } else {
                 req.flash('errorMessage', 'El nombre que proporcionó no concuerda con el del primer campo del objeto que desea eliminar.')

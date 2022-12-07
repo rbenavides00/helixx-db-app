@@ -145,14 +145,17 @@ router.post('/tables/upload', auth, async (req, res) => {
 
         await uploadedFile.mv(uploadPath)
         const data = parser.parseXls2Json(uploadPath)
-        const sample = data[0][0]
-        var sampleColumns = 0
 
-        fs.unlink(uploadPath, (error) => {
-            if (error) throw error
+        // Usar .trim() a cada celda si es un string
+        data[0].forEach((obj) => {
+            Object.keys(obj).forEach((key) => {
+                obj[key] = typeof obj[key] === 'string' ? obj[key].trim() : obj[key]
+            })
         })
 
         // ERROR HANDLER: Alguna columna tiene un formato inválido
+        const sample = data[0][0]
+        var sampleColumns = 0
         for (const key in sample) {
             if (!key.match(/^[a-zñáéíóúüA-ZÑÁÉÍÓÚÜ0-9_ .-]*$/) ||
                 key === '_id' ||
@@ -170,6 +173,10 @@ router.post('/tables/upload', auth, async (req, res) => {
             req.flash('errorMessage', `Archivo rechazado. El mínimo número de columnas es de 2.`)
             return res.redirect('/tables')
         }
+
+        fs.unlink(uploadPath, (error) => {
+            if (error) throw error
+        })
 
         await createColl(connection, table)
         await insertDocs(connection, table, data[0])
