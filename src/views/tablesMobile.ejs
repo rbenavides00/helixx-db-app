@@ -12,7 +12,27 @@
 </div>
 
 
-
+<div>
+    <!-- Visual Studio puede mostrar un error con el formato de CSS: Ignorar, ya que se está insertando texto dentro de CSS. -->
+    <% if (storageSizePercentage < 50) { %>
+    <div class="progress">
+        <div class="progress-bar bg-info" role="progressbar" style="width: <%= storageSizePercentage %>%;" aria-valuenow="<%= storageSizePercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <% } %>
+    <% if (storageSizePercentage >= 50 && storageSizePercentage < 70) { %>
+    <div class="progress">
+        <div class="progress-bar bg-warning" role="progressbar" style="width: <%= storageSizePercentage %>%;" aria-valuenow="<%= storageSizePercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <% } %>
+    <% if (storageSizePercentage >= 70) { %>
+    <div class="progress">
+        <div class="progress-bar bg-danger" role="progressbar" style="width: <%= storageSizePercentage %>%;" aria-valuenow="<%= storageSizePercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <% } %>
+    <p>
+        Espacio usado: <%= storageSize %>MB / 512MB (<%= (storageSize*100)/512 %>%)
+    </p>
+</div>
 <%_ tables.forEach((table) => { _%>
     <div class="card border-primary mb-3">
         <div class="card-header text-white bg-dark">

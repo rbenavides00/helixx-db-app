@@ -16,17 +16,31 @@ const Table = require('../models/tableModel')
 const router = express.Router()
 const auth = require('../utils/isAuthenticated')
 const connect = require('../db/database')
-const { getColls, dropColl, createColl, getDocs, insertDocs } = require('../db/dbFunctions')
+const { getColls, dropColl, createColl, getDocs, insertDocs, getDbStats } = require('../db/dbFunctions')
 const { exportExcel } = require('../utils/excelConverter')
 
 // GET /tables
 router.get('/tables', auth, async (req, res) => {
     try {
         const tables = await Table.find({}).lean().sort({ createdAt: 1 })
+
+        const connection = await connect()
+        const { storageSize } = await getDbStats(connection)
+
         if (req.useragent.isMobile) {
-            res.render('tablesMobile', { title: 'Tablas', tables })
+            res.render('tablesMobile', {
+                title: 'Tablas',
+                tables,
+                storageSize: storageSize / 1000000,
+                storageSizePercentage: ((storageSize / 1000000) * 100) / 512
+            })
         } else {
-            res.render('tables', { title: 'Tablas', tables })
+            res.render('tables', {
+                title: 'Tablas',
+                tables,
+                storageSize: storageSize / 1000000,
+                storageSizePercentage: ((storageSize / 1000000) * 100) / 512
+            })
         }
     } catch (error) {
         res.status(500).render('error', { title: 'Error', error })
@@ -54,7 +68,7 @@ router.post('/tables/download/:table', auth, async (req, res) => {
             req.flash('errorMessage', 'Acción denegada.')
             return res.redirect('/tables')
         }
-            
+
         const docs = await getDocs(connection, table, {}, { _id: 0 }, 0, 0, {})
         const buff = await exportExcel(table, docs)
         const fileName = `helixx-db-${table}.xlsx`

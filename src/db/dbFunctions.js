@@ -50,5 +50,8 @@ module.exports = {
     },
     deleteColumn: async function (conn, coll, data) {
         return await conn.db(db).collection(coll).updateMany({}, { $unset: data })
+    },
+    getDbStats: async function (conn) {
+        return await conn.db(db).stats({ scale: 1024 })
     }
 }

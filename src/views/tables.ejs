@@ -91,7 +91,28 @@
     <%_ } _%> 
 
     <!-- Botón Subir nueva tabla -->
-    <div class="float-right">
+    <div>
+        <div class="float-left">
+            <!-- Visual Studio puede mostrar un error con el formato de CSS: Ignorar, ya que se está insertando texto dentro de CSS. -->
+            <% if (storageSizePercentage < 50) { %>
+            <div class="progress">
+                <div class="progress-bar bg-info" role="progressbar" style="width: <%= storageSizePercentage %>%;" aria-valuenow="<%= storageSizePercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <% } %>
+            <% if (storageSizePercentage >= 50 && storageSizePercentage < 70) { %>
+            <div class="progress">
+                <div class="progress-bar bg-warning" role="progressbar" style="width: <%= storageSizePercentage %>%;" aria-valuenow="<%= storageSizePercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <% } %>
+            <% if (storageSizePercentage >= 70) { %>
+            <div class="progress">
+                <div class="progress-bar bg-danger" role="progressbar" style="width: <%= storageSizePercentage %>%;" aria-valuenow="<%= storageSizePercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <% } %>
+            <p>
+                Espacio usado en base de datos: <%= storageSize %>MB / 512MB (<%= storageSizePercentage %>%)
+            </p>
+        </div>
         <button type="button" class="btn btn-primary float-right" data-bs-toggle="modal" data-bs-target="#modal-upload-table">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
