@@ -23,23 +23,23 @@ const { exportExcel } = require('../utils/excelConverter')
 router.get('/tables', auth, async (req, res) => {
     try {
         const tables = await Table.find({}).lean().sort({ createdAt: 1 })
-
         const connection = await connect()
         const { storageSize } = await getDbStats(connection)
+        const storageSizeMb = storageSize / 1000 // Obtener valor en MegaBytes
 
         if (req.useragent.isMobile) {
             res.render('tablesMobile', {
                 title: 'Tablas',
                 tables,
-                storageSize: storageSize / 1000000,
-                storageSizePercentage: ((storageSize / 1000000) * 100) / 512
+                storageSize: storageSizeMb,
+                storageSizePercentage: ((storageSizeMb * 100) / 512).toFixed(4)
             })
         } else {
             res.render('tables', {
                 title: 'Tablas',
                 tables,
-                storageSize: storageSize / 1000000,
-                storageSizePercentage: ((storageSize / 1000000) * 100) / 512
+                storageSize: storageSizeMb,
+                storageSizePercentage: ((storageSizeMb * 100) / 512).toFixed(4)
             })
         }
     } catch (error) {
