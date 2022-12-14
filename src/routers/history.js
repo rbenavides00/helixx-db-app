@@ -28,13 +28,19 @@ async function getLogs(query, download) {
     }
     var errorMessage = ''
     var queryString = ''
+
+    // CONFIGURACIÓN: Variables de ambiente que definen predeterminado, mínimo y máximo de filas
+    const tableRowsDefault = Number(process.env.TABLE_ROWS_DEFAULT)
+    const tableRowsMin = Number(process.env.TABLE_ROWS_MIN)
+    const tableRowsMax = Number(process.env.TABLE_ROWS_MAX)
+
     page = query.page ? parseInt(query.page) : 1
     sortOrder = query.sortOrder ? parseInt(query.sortOrder) : -1
 
     // GET sin query
     if (Object.keys(query).length === 0 && query.constructor === Object) {
         if (!download) {
-            limit = 10
+            limit = tableRowsDefault
             skip = (limit - (limit * 2)) + (page * limit)
             logs = await Log.find(filters, '-_id -user -updatedAt -__v').lean().limit(limit).skip(skip).sort({ createdAt: sortOrder })
         } else {
@@ -43,14 +49,15 @@ async function getLogs(query, download) {
         logsCount = await Log.countDocuments()
         // GET con Query
     } else {
-        // ERROR HANDLER: Búsqueda de query inválida (Evitar limit menor o mayor a 100 y sortOrder diferente a 1 y -1)
-        if (query.limit < 10 ||
-            query.limit > 100 ||
+        // ERROR HANDLER: Búsqueda de query inválida (Evitar limit menor o mayor a definidos en ambiente
+        // y sortOrder diferente a 1 y -1)
+        if (query.limit < tableRowsMin ||
+            query.limit > tableRowsMax ||
             (sortOrder !== 1 && sortOrder !== -1)) {
             errorMessage = 'Formato de filtros inválido. Intente cambiar los filtros de búsqueda e intente de nuevo.'
         }
 
-        limit = !query.limit ? 10 : query.limit
+        limit = !query.limit ? tableRowsDefault : query.limit
         if (query.user) filters.email = query.user.trim().toLowerCase()
         if (query.actionType) filters.actionType = query.actionType
         if (query.affectedObj) filters.affectedObj = query.affectedObj
@@ -98,7 +105,7 @@ async function getLogs(query, download) {
     pageArray = pagination(page, Math.ceil(logsCount / limit))
     if (page > parseInt(pageArray[pageArray.length - 1]))
         errorMessage = 'Formato de filtros inválido. Intente cambiar los filtros de búsqueda e intente de nuevo.'
-    return { logs, logsCount, pageArray, errorMessage, queryString }
+    return { logs, logsCount, pageArray, errorMessage, queryString, tableRowsDefault, tableRowsMin, tableRowsMax }
 }
 
 // GET /history
@@ -114,7 +121,7 @@ router.get('/history', auth, async (req, res) => {
             return res.redirect('/history')
         }
 
-        const { logs, logsCount, pageArray, errorMessage } = await getLogs(req.query, false)
+        const { logs, logsCount, pageArray, errorMessage, tableRowsDefault, tableRowsMin, tableRowsMax } = await getLogs(req.query, false)
 
         if (errorMessage !== '') {
             req.flash('errorMessage', errorMessage)
@@ -131,7 +138,10 @@ router.get('/history', auth, async (req, res) => {
                 logsCount,
                 pageArray,
                 noMatch: logsCount === 0,
-                isMobile: true
+                isMobile: true,
+                tableRowsDefault,
+                tableRowsMin,
+                tableRowsMax
             })
         } else {
             res.render('history', {
@@ -141,7 +151,10 @@ router.get('/history', auth, async (req, res) => {
                 logsCount,
                 pageArray,
                 noMatch: logsCount === 0,
-                isMobile: false
+                isMobile: false,
+                tableRowsDefault,
+                tableRowsMin,
+                tableRowsMax
             })
         }
     } catch (error) {

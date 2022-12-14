@@ -28,6 +28,11 @@ router.get('/tables/view/:table', auth, async (req, res) => {
         const colls = await getColls(connection)
         let tableFound = false
 
+        // CONFIGURACIÓN: Variables de ambiente que definen predeterminado, mínimo y máximo de filas
+        const tableRowsDefault = Number(process.env.TABLE_ROWS_DEFAULT)
+        const tableRowsMin = Number(process.env.TABLE_ROWS_MIN)
+        const tableRowsMax = Number(process.env.TABLE_ROWS_MAX)
+
         // ERROR HANDLER: Tabla no existe en base de datos
         for (let i = 0; i < colls.length; i++) {
             if (colls[i].name === table) tableFound = true
@@ -62,16 +67,16 @@ router.get('/tables/view/:table', auth, async (req, res) => {
 
         // GET sin query
         if (Object.keys(req.query).length === 0 && req.query.constructor === Object) {
-            limit = 10
+            limit = tableRowsDefault
             columnsToKeep = columns
             skip = (limit - (limit * 2)) + (page * limit)
             docs = await getDocs(connection, table, filters, {}, limit, skip, sort)
             docsCount = await getDocsCount(connection, table, filters)
             // GET con query
         } else {
-            // ERROR HANDLER: Búsqueda de query inválida (Evitar limit menor o mayor a 100)
-            if (req.query.limit < 10 ||
-                req.query.limit > 100) {
+            // ERROR HANDLER: Búsqueda de query inválida (Evitar limit menor o mayor a definidos en ambiente)
+            if (req.query.limit < tableRowsMin ||
+                req.query.limit > tableRowsMax) {
                 req.flash('errorMessage', 'Formato de filtros inválido. Intente cambiar los filtros de búsqueda e intente de nuevo.')
                 return res.redirect(`/tables/view/${table}`)
             }
@@ -83,7 +88,7 @@ router.get('/tables/view/:table', auth, async (req, res) => {
                     return res.redirect(`/tables/view/${table}`)
                 }
             }
-            limit = !req.query.limit ? 10 : parseInt(req.query.limit)
+            limit = !req.query.limit ? tableRowsDefault : parseInt(req.query.limit)
 
             for (let i = 0; i < columns.length; i++) {
                 if (req.query[`show_${columns[i]}`]) columnsToKeep.push(columns[i])
@@ -134,7 +139,10 @@ router.get('/tables/view/:table', auth, async (req, res) => {
                 pageArray,
                 firstAccess: Object.keys(req.query).length === 0 && req.query.constructor === Object,
                 docsCount,
-                isMobile: true
+                isMobile: true,
+                tableRowsDefault,
+                tableRowsMin,
+                tableRowsMax
             })
         } else {
             res.render('view', {
@@ -146,7 +154,10 @@ router.get('/tables/view/:table', auth, async (req, res) => {
                 pageArray,
                 firstAccess: Object.keys(req.query).length === 0 && req.query.constructor === Object,
                 docsCount,
-                isMobile: false
+                isMobile: false,
+                tableRowsDefault,
+                tableRowsMin,
+                tableRowsMax
             })
         }
     } catch (error) {
@@ -162,6 +173,10 @@ router.get('/tables/view/:table/download', auth, async (req, res) => {
         const connection = await connect()
         const colls = await getColls(connection)
         let tableFound = false
+
+        // CONFIGURACIÓN: Variables de ambiente que definen predeterminado, mínimo y máximo de filas
+        const tableRowsMin = Number(process.env.TABLE_ROWS_MIN)
+        const tableRowsMax = Number(process.env.TABLE_ROWS_MAX)
 
         // ERROR HANDLER: Tabla no existe en base de datos
         for (let i = 0; i < colls.length; i++) {
@@ -190,9 +205,9 @@ router.get('/tables/view/:table/download', auth, async (req, res) => {
             docs = await getDocs(connection, table, filters, { _id: 0 }, 0, 0, sort)
             // GET con Query
         } else {
-            // ERROR HANDLER: Búsqueda de query inválida (Evitar limit menor o mayor a 100)
-            if (req.query.limit < 10 ||
-                req.query.limit > 100) {
+            // ERROR HANDLER: Búsqueda de query inválida (Evitar limit menor o mayor a definidos en ambiente)
+            if (req.query.limit < tableRowsMin ||
+                req.query.limit > tableRowsMax) {
                 req.flash('errorMessage', 'Formato de filtros inválido. Intente cambiar los filtros de búsqueda e intente de nuevo.')
                 return res.redirect(`/tables/view/${table}`)
             }

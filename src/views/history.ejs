@@ -64,7 +64,7 @@
         <div class="form-inline mb-3">
             <!-- Campo Definir límite -->
             <label class="mx-1 my-1">Mostrar</label>
-            <input type="number" min="10" max="100" name="limit" placeholder="10" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('limit')) { _%>value="<%= query.get('limit') %>"<%_ } _%>>
+            <input type="number" min="<%= tableRowsMin %>" max="<%= tableRowsMax %>" name="limit" placeholder="<%= tableRowsDefault %>" class="form-control form-control-sm mx-1 my-1" <%_ if (query.get('limit')) { _%> value="<%= query.get('limit') %>"<%_ } else { _%> value="<%= tableRowsDefault %>" <%_ } _%> >
             <label class="mx-1 my-1">registros</label>
             <!-- Lista deplegable "sortOrder" -->
             <select name="sortOrder" class="custom-select custom-select-sm ml-3 my-1">

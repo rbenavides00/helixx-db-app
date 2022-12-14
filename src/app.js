@@ -75,4 +75,37 @@ app.get('*', auth, (req, res) => {
     })
 })
 
+// Validación de variables de ambiente
+const fileLimit = Number(process.env.FILE_LIMIT)
+const tableRowsDefault = Number(process.env.TABLE_ROWS_DEFAULT)
+const tableRowsMin = Number(process.env.TABLE_ROWS_MIN)
+const tableRowsMax = Number(process.env.TABLE_ROWS_MAX)
+
+if (isNaN(fileLimit) ||
+    isNaN(tableRowsDefault) ||
+    isNaN(tableRowsMin) ||
+    isNaN(tableRowsMax)) {
+    throw new Error(`[VARIABLE DE AMBIENTE INVÁLIDA]: Alguno de los valores de FILE_LIMIT, TABLE_ROWS_DEFAULT, TABLE_ROWS_MIN ó TABLE_ROWS_MAX no es numérico.`)
+}
+if (tableRowsDefault <= 0 ||
+    tableRowsMin <= 0 ||
+    tableRowsMax <= 0) {
+    throw new Error(`[VARIABLE DE AMBIENTE INVÁLIDA]: Alguno de los valores de TABLE_ROWS_DEFAULT, TABLE_ROWS_MIN ó TABLE_ROWS_MAX es menor o igual a 0.`)
+}
+if (!Number.isInteger(tableRowsDefault) ||
+    !Number.isInteger(tableRowsMin) ||
+    !Number.isInteger(tableRowsMax)) {
+    throw new Error(`[VARIABLE DE AMBENTE INVÁLIDA]: Alguno de los valores de TABLE_ROWS_DEFAULT, TABLE_ROWS_MIN ó TABLE_ROWS_MAX es decimal.`)
+}
+if (tableRowsMin > tableRowsMax) {
+    throw new Error(`[VARIABLE DE AMBENTE INVÁLIDA]: La variable TABLES_ROWS_MIN no puede ser mayor a TABLES_ROWS_MAX (${tableRowsMin} > ${tableRowsMax}).`)
+}
+if (tableRowsMin === tableRowsMax) {
+    throw new Error(`[VARIABLE DE AMBENTE INVÁLIDA]: Las variables TABLES_ROWS_MIN y TABLES_ROWS_MAX no pueden tener el mismo valor (${tableRowsMin} = ${tableRowsMax}).`)
+}
+if (tableRowsDefault < tableRowsMin ||
+    tableRowsDefault > tableRowsMax) {
+    throw new Error(`[VARIABLE DE AMBENTE INVÁLIDA]: La variable TABLE_ROWS_DEFAULT debe estar dentro del rango de las variables TABLES_ROWS_MIN y TABLES_ROWS_MAX (El valor ${process.env.TABLE_ROWS_DEFAULT} no se encuentra dentro del rango: ${process.env.TABLE_ROWS_MIN} - ${tableRowsMax}).`)
+}
+
 module.exports = app
