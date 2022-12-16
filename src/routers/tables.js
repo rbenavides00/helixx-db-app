@@ -24,22 +24,22 @@ router.get('/tables', auth, async (req, res) => {
     try {
         const tables = await Table.find({}).lean().sort({ createdAt: 1 })
         const connection = await connect()
-        const { storageSize } = await getDbStats(connection)
-        const storageSizeMb = storageSize / 1000 // Obtener valor en MegaBytes
+        const { dataSize, indexSize } = await getDbStats(connection)
+        const storageSizeMb = ((dataSize / 1000) + (indexSize / 1000)) / 1000 // Obtener valor en MegaBytes
 
         if (req.useragent.isMobile) {
             res.render('tablesMobile', {
                 title: 'Tablas',
                 tables,
-                storageSize: storageSizeMb,
-                storageSizePercentage: ((storageSizeMb * 100) / 512).toFixed(4)
+                storageSize: parseFloat((storageSizeMb).toFixed(2)),
+                storageSizePercentage: parseFloat(((storageSizeMb * 100) / 512).toFixed(2))
             })
         } else {
             res.render('tables', {
                 title: 'Tablas',
                 tables,
-                storageSize: storageSizeMb,
-                storageSizePercentage: ((storageSizeMb * 100) / 512).toFixed(4)
+                storageSize: parseFloat((storageSizeMb).toFixed(2)),
+                storageSizePercentage: parseFloat(((storageSizeMb * 100) / 512).toFixed(2))
             })
         }
     } catch (error) {
